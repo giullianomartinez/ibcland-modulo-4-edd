@@ -145,7 +145,7 @@ void visitanteInsertar (struct NodoVisitantes *headVisitantes, struct Visitante 
 
 }
 
-void visitanteEliminar(struct NodoVisitantes *headVisitantes, struct Visitante *visitanteEliminar) {
+void eliminarVisitanteDeLista(struct NodoVisitantes *headVisitantes, struct Visitante *visitanteEliminar) {
 
     struct NodoVisitantes *rec = headVisitantes->siguiente;
 
@@ -176,7 +176,7 @@ int visitanteTotalContar (struct NodoVisitantes *headVisitantes) {
     return contador;
 }
 
-struct Visitante *quitarVisitante(struct NodoVisitantes **headVisitantes, struct Visitante *visitanteQuitar) {
+struct Visitante *quitarVisitanteDeLista(struct NodoVisitantes **headVisitantes, struct Visitante *visitanteQuitar) {
 
     struct NodoVisitantes *rec = (*headVisitantes)->siguiente;
     struct Visitante *quitado = NULL;
@@ -365,7 +365,7 @@ void agregarVisitanteFila(struct NodoFila *HeadFila, struct Visitante *Cliente) 
 
 }
 
-void eliminarVisitanteFila(char *codigo, struct NodoFila *HeadFila) {
+void eliminarVisitanteDeFila(char *codigo, struct NodoFila *HeadFila) {
     struct NodoFila *rec, *anterior;
     rec = HeadFila->siguiente;
     anterior = HeadFila;
@@ -882,11 +882,11 @@ int estimarTiempoAtraccion(struct NodoAtracciones *Atraccion)
     return 0;
 }
 
-void abandonarFilaAtraccion(struct NodoAtracciones *Atraccion, char *Nombre)
+void quitarVisitanteDeFilaAtraccion(struct NodoAtracciones *Atraccion, char *codigo)
 {
     if(Atraccion!=NULL && Atraccion->datos!=NULL)
     {
-        eliminarVisitanteFila(Nombre,Atraccion->datos->headFila);
+        eliminarVisitanteDeFila(codigo,Atraccion->datos->headFila);
     }
 }
 
@@ -1775,7 +1775,7 @@ void menuEliminarVisitante(struct NodoVisitantes **headVisitantes) {
     }
 
     if (visitanteEncontrado != NULL) {
-        visitanteEliminar(*headVisitantes, visitanteEncontrado);
+        eliminarVisitanteDeLista(*headVisitantes, visitanteEncontrado);
         printf("\nEl visitante con codigo '%s' ha sido eliminado de la lista.\n", codigoBuscado);
     } else {
         printf("\nError: No se encontro ningun visitante registrado con el codigo '%s'.\n", codigoBuscado);
@@ -1806,7 +1806,7 @@ void menuContarVisitantesAdentro(struct NodoVisitantes *headVisitantes) {
     printf("\n>> Actualmente hay %d visitantes explorando el parque.\n", adentro);
 }
 
-void menuQuitarVisitantes(struct NodoVisitantes **headVisitantes) {
+void menuQuitarVisitante(struct NodoVisitantes **headVisitantes) {
     char *codigoBuscado;
     struct Visitante *visitanteEncontrado = NULL;
     struct Visitante *visitanteExtraido=NULL;
@@ -1835,7 +1835,7 @@ void menuQuitarVisitantes(struct NodoVisitantes **headVisitantes) {
     }
 
     if (visitanteEncontrado != NULL) {
-        visitanteExtraido = quitarVisitante(headVisitantes, visitanteEncontrado);
+        visitanteExtraido = quitarVisitanteDeLista(headVisitantes, visitanteEncontrado);
 
         if (visitanteExtraido != NULL) {
             printf("\nVisitante quitado de la lista.\n\n");
@@ -2071,7 +2071,7 @@ void menuVisitantes(struct NodoVisitantes **headVisitantes) {
                 break;
 
             case '5':
-                menuQuitarVisitantes(headVisitantes);
+                menuQuitarVisitante(headVisitantes);
                 PausarPantalla();
                 break;
 
@@ -2666,7 +2666,7 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
                     if (buscarVisitanteAtraccion(AtraccionActual, codigoVisitante) != NULL) {
 
                         /* 2. Si existe, lo eliminamos usando tu función modularizada */
-                        abandonarFilaAtraccion(AtraccionActual, codigoVisitante);
+                        quitarVisitanteDeFilaAtraccion(AtraccionActual, codigoVisitante);
 
                         printf("El visitante con codigo %s ha sido retirado de la fila correctamente.\n", codigoVisitante);
                     } else {
