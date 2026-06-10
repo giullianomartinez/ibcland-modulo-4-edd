@@ -1,4 +1,4 @@
-# IBCLand-Modulo-4-EDD
+# IBCLand
 
 Proyecto desarrollado para la asignatura **INF2223 - Estructuras de Datos**.
 
