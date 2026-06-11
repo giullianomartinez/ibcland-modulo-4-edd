@@ -890,11 +890,11 @@ void quitarVisitanteDeFilaAtraccion(struct NodoAtracciones *Atraccion, char *cod
     }
 }
 
-struct Visitante *buscarVisitanteAtraccion(struct NodoAtracciones *Atraccion,char *Nombre)
+struct Visitante *buscarVisitanteAtraccion(struct NodoAtracciones *Atraccion,char *codigo)
 {
     if(Atraccion!=NULL && Atraccion->datos!=NULL)
     {
-        return buscarVisitanteEnFila(Atraccion->datos->headFila,Nombre);
+        return buscarVisitanteEnFila(Atraccion->datos->headFila,codigo);
     }
     return NULL;
 }
@@ -1809,12 +1809,12 @@ void menuContarVisitantesAdentro(struct NodoVisitantes *headVisitantes) {
 void menuQuitarVisitante(struct NodoVisitantes **headVisitantes) {
     char *codigoBuscado;
     struct Visitante *visitanteEncontrado = NULL;
-    struct Visitante *visitanteExtraido=NULL;
+    struct Visitante *visitanteQuitado=NULL;
 
     struct NodoVisitantes *rec = (*headVisitantes)->siguiente;
 
     printf("\n========================================\n");
-    printf("          EXTRAER VISITANTE             \n");
+    printf("          QUITAR VISITANTE              \n");
     printf("========================================\n");
 
     if (rec == NULL) {
@@ -1822,7 +1822,7 @@ void menuQuitarVisitante(struct NodoVisitantes **headVisitantes) {
         return;
     }
 
-    printf("Ingrese el codigo de entrada del visitante a extraer: ");
+    printf("Ingrese el codigo de entrada del visitante a quitar: ");
     codigoBuscado = pedirCadena();
 
     /* Buscar al visitante por su código*/
@@ -1835,13 +1835,13 @@ void menuQuitarVisitante(struct NodoVisitantes **headVisitantes) {
     }
 
     if (visitanteEncontrado != NULL) {
-        visitanteExtraido = quitarVisitanteDeLista(headVisitantes, visitanteEncontrado);
+        visitanteQuitado = quitarVisitanteDeLista(headVisitantes, visitanteEncontrado);
 
-        if (visitanteExtraido != NULL) {
+        if (visitanteQuitado != NULL) {
             printf("\nVisitante quitado de la lista.\n\n");
-            printf("Nombre: %s\n", visitanteExtraido->nombre);
-            printf("Edad: %d\n", visitanteExtraido->edad);
-            printf("Codigo de Entrada: %s\n", visitanteExtraido->entrada.codigo);
+            printf("Nombre: %s\n", visitanteQuitado->nombre);
+            printf("Edad: %d\n", visitanteQuitado->edad);
+            printf("Codigo de Entrada: %s\n", visitanteQuitado->entrada.codigo);
         }
     } else {
         printf("\nError: No se encontro ningun visitante con el codigo '%s'.\n", codigoBuscado);
@@ -2033,7 +2033,7 @@ void menuVisitantes(struct NodoVisitantes **headVisitantes) {
         printf("|| [2] Eliminar visitante                        ||\n");
         printf("|| [3] Contar total de visitantes                ||\n");
         printf("|| [4] Contar visitantes adentro                 ||\n");
-        printf("|| [5] Extraer (quitar) visitante                ||\n");
+        printf("|| [5] Quitar visitante                          ||\n");
         printf("|| [6] Listar visitantes                         ||\n");
         printf("|| [7] Marcar la salida del visitante            ||\n");
         printf("|| [8] Modificar visitante                       ||\n");
