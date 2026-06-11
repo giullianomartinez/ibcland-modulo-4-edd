@@ -110,7 +110,7 @@ char *pedirCadena(void) {
     return copiarCadena(buffer);
 }
 
-int miStrCaseCmp(const char *s1,const char *s2)
+int compararCadenasIgnorandoMayusculas(const char *s1,const char *s2)
 {
     while(*s1 && *s2 && tolower((unsigned char)*s1)==tolower((unsigned char )*s2))
     {
@@ -120,14 +120,14 @@ int miStrCaseCmp(const char *s1,const char *s2)
     return tolower((unsigned char)*s1)-tolower((unsigned char)*s2);
 }
 
-void PausarPantalla(void)
+void pausarPantalla(void)
 {
     printf("\nPresione ENTER para continuar...");
     getchar();
 }
 
 /* Visitantes */
-void visitanteInsertar (struct NodoVisitantes *headVisitantes, struct Visitante *datos) {
+void insertarVisitante (struct NodoVisitantes *headVisitantes, struct Visitante *datos) {
 
     struct NodoVisitantes *nuevo = (struct NodoVisitantes *)malloc(sizeof(struct NodoVisitantes));
     struct NodoVisitantes *ultimo = headVisitantes;
@@ -164,7 +164,7 @@ void eliminarVisitanteDeLista(struct NodoVisitantes *headVisitantes, struct Visi
     }
 }
 
-int visitanteTotalContar (struct NodoVisitantes *headVisitantes) {
+int contarVisitantesTotales (struct NodoVisitantes *headVisitantes) {
     struct NodoVisitantes *rec = headVisitantes->siguiente;
     int contador = 0;
 
@@ -200,7 +200,7 @@ struct Visitante *quitarVisitanteDeLista(struct NodoVisitantes **headVisitantes,
     return NULL;
 }
 
-int visitantesAdentroContar (struct NodoVisitantes *headVisitantes) {
+int contarVisitantesDentro (struct NodoVisitantes *headVisitantes) {
     int contador = 0;
     struct NodoVisitantes *rec = headVisitantes->siguiente;
 
@@ -230,7 +230,7 @@ struct Visitante* crearVisitante(struct Entrada entrada, char *nombre, int edad,
     return nuevoVisitante;
 }
 
-void visitantesListar (struct NodoVisitantes *headVisitantes) {
+void listarVisitantes (struct NodoVisitantes *headVisitantes) {
     struct NodoVisitantes *rec = headVisitantes->siguiente;
 
 
@@ -249,7 +249,7 @@ void visitantesListar (struct NodoVisitantes *headVisitantes) {
 
 }
 
-void visitanteMarcarSalida (struct NodoVisitantes *headVisitantes, char *codigoEntrada, int horaFin, int minutosFin) {
+void marcarSalidaVisitante (struct NodoVisitantes *headVisitantes, char *codigoEntrada, int horaFin, int minutosFin) {
 
     struct NodoVisitantes *rec = headVisitantes->siguiente;
 
@@ -285,7 +285,7 @@ struct Visitante *visitanteBuscar(struct NodoVisitantes *headVisitantes, char *c
 
     rec = headVisitantes->siguiente;
     while (rec != NULL) {
-        if (miStrCaseCmp(rec->datos->entrada.codigo, codigoBuscado) == 0) {
+        if (compararCadenasIgnorandoMayusculas(rec->datos->entrada.codigo, codigoBuscado) == 0) {
             visitanteBuscado = rec->datos;
             return visitanteBuscado;
         }
@@ -294,7 +294,7 @@ struct Visitante *visitanteBuscar(struct NodoVisitantes *headVisitantes, char *c
     return visitanteBuscado;
 }
 
-int visitanteModificar(struct NodoVisitantes *headVisitantes, char *codigoBuscado, char *nuevoNombre, int nuevaEdad, float nuevaAltura, char *nuevoTipoEntrada, char *nuevoEstado) {
+int modificarVisitante(struct NodoVisitantes *headVisitantes, char *codigoBuscado, char *nuevoNombre, int nuevaEdad, float nuevaAltura, char *nuevoTipoEntrada, char *nuevoEstado) {
     struct Visitante *visitanteEncontrado;
 
     visitanteEncontrado = visitanteBuscar(headVisitantes, codigoBuscado);
@@ -337,7 +337,7 @@ struct NodoFila *crearFilaVacia(void) /*La siguiente funcion creara la fila con 
 }
 
 
-void agregarVisitanteFila(struct NodoFila *HeadFila, struct Visitante *Cliente) /*La siguiente funcion agregara un visitante a la fila de una atraccion*/
+void agregarVisitanteAFila(struct NodoFila *HeadFila, struct Visitante *Cliente) /*La siguiente funcion agregara un visitante a la fila de una atraccion*/
 {
     struct NodoFila *rec;
     struct NodoFila *NodoPrivado; /*Nodo que no se vera en ningun momento en el main y solo se sabe que existe en este archivo*/
@@ -380,7 +380,7 @@ void eliminarVisitanteDeFila(char *codigo, struct NodoFila *HeadFila) {
     }
 }
 
-int contarCantidadPersonasFila(struct NodoFila *HeadFila) /*La siguiente funcion contara la cantidad de personas que esten actualmente en la fila*/
+int contarPersonasEnFila(struct NodoFila *HeadFila) /*La siguiente funcion contara la cantidad de personas que esten actualmente en la fila*/
 {
     struct NodoFila *rec;
     int Contador=0;
@@ -403,7 +403,7 @@ int estimarTiempoEspera(struct NodoFila *HeadFila,int capacidad,int duracion) /*
 
     if(HeadFila!=NULL)
     {
-        CantidadPersonas=contarCantidadPersonasFila(HeadFila); /*Usamos la funcion anterior para contar*/
+        CantidadPersonas=contarPersonasEnFila(HeadFila); /*Usamos la funcion anterior para contar*/
         if(CantidadPersonas>0)
         {
             while(CantidadPersonas>0) /*Mientras tenga capacidad para iniciar el juego, sera la espera estimada*/
@@ -430,7 +430,7 @@ struct Visitante **vaciarTodaLaFila( struct NodoFila *HeadFila) /*La siguiente f
         if(HeadFila->siguiente!=NULL)
         {
             rec=HeadFila->siguiente;
-            CantidadPersonas=contarCantidadPersonasFila(HeadFila);  /*Calculamos la cantidad de personas en la fila*/
+            CantidadPersonas=contarPersonasEnFila(HeadFila);  /*Calculamos la cantidad de personas en la fila*/
             if(CantidadPersonas>0)
             {
                 Personas=(struct Visitante**)malloc(sizeof(struct Visitante*)*CantidadPersonas); /*Damos memoria con el contador*/
@@ -455,7 +455,7 @@ struct Visitante **vaciarTodaLaFila( struct NodoFila *HeadFila) /*La siguiente f
     return NULL;
 }
 
-void mostrarFilaVisitantes(struct NodoFila *HeadFila) /*La siguiente funcion mostrara toda la fila actual de la atraccion correspondiente*/
+void mostrarVisitantesEnFila(struct NodoFila *HeadFila) /*La siguiente funcion mostrara toda la fila actual de la atraccion correspondiente*/
 {
     struct NodoFila *rec;
     int posicion=1;
@@ -497,14 +497,14 @@ struct Visitante *buscarVisitanteEnFila(struct NodoFila *HeadFila, char *codigo)
     return NULL;
 }
 
-void atenderVisitantesAtraccion(struct NodoFila *HeadFila,int capacidad, int *usos) /*La siguiente funcion atendera a los visitante, los quitara de la fila y los subira a la atraccion*/
+void atenderVisitantesEnAtraccion(struct NodoFila *HeadFila,int capacidad, int *usos) /*La siguiente funcion atendera a los visitante, los quitara de la fila y los subira a la atraccion*/
 {
     struct NodoFila *rec;
     int ContarPersonas,i,PersonasASubir;
 
     if(HeadFila!=NULL) /*Si existe la fila*/
     {
-        ContarPersonas=contarCantidadPersonasFila(HeadFila); /*Contamos las personas que tiene en su fila*/
+        ContarPersonas=contarPersonasEnFila(HeadFila); /*Contamos las personas que tiene en su fila*/
         while(ContarPersonas>0)
         {
             if(ContarPersonas<capacidad) /*Calculamos si las personas que subiran son las personas que sobra*/
@@ -561,7 +561,7 @@ void ordenarEvacuadosPorEdad(struct Visitante **Evacuados,int Cantidad)
     }
 }
 
-void atenderFilasUnaVez(struct NodoFila *HeadFila,int capacidad,int *usos)
+void atenderFilaUnaVez(struct NodoFila *HeadFila,int capacidad,int *usos)
 {
     struct NodoFila *rec;
     int CantidadPersonas,i,PersonasASubir;
@@ -571,7 +571,7 @@ void atenderFilasUnaVez(struct NodoFila *HeadFila,int capacidad,int *usos)
     {
         rec=HeadFila->siguiente;
 
-        CantidadPersonas=contarCantidadPersonasFila(HeadFila);
+        CantidadPersonas=contarPersonasEnFila(HeadFila);
 
         if(CantidadPersonas>capacidad)
         {
@@ -596,15 +596,15 @@ void atenderFilasUnaVez(struct NodoFila *HeadFila,int capacidad,int *usos)
 }
 
 /* Atracciones */
-void imprimirNodosAtraccion(struct NodoAtracciones *raizArbol)
+void imprimirAtraccionesEnOrden(struct NodoAtracciones *raizArbol)
 {
     if(raizArbol)
     {
-        imprimirNodosAtraccion(raizArbol->izquierdo);
+        imprimirAtraccionesEnOrden(raizArbol->izquierdo);
 
         printf(" %-22.22s | %-9d | %-8d | %-10.2f | %-4d | %-15.15s\n", raizArbol->datos->nombre, raizArbol->datos->capacidad, raizArbol->datos->duracion, raizArbol->datos->alturaMinima, raizArbol->datos->edadMinima, raizArbol->datos->estado);
 
-        imprimirNodosAtraccion(raizArbol->derecho);
+        imprimirAtraccionesEnOrden(raizArbol->derecho);
     }
 }
 
@@ -621,7 +621,7 @@ void listarAtracciones(struct NodoAtracciones *raizArbol) {
     printf(" %-22s | %-9s | %-8s | %-10s | %-4s | %-15s\n", "Nombre de Atraccion", "Capacidad", "Minutos", "Altura min.", "Edad", "Estado");
     printf(" ------------------------------------------------------------------------------------");
 
-    imprimirNodosAtraccion(raizArbol);
+    imprimirAtraccionesEnOrden(raizArbol);
 
     printf(" ------------------------------------------------------------------------------------");
 }
@@ -767,7 +767,7 @@ void atenderAtraccion(struct NodoAtracciones *Atraccion) /*Funcion para usar la 
 {
     if(Atraccion!=NULL && Atraccion->datos!=NULL)
     {
-        atenderVisitantesAtraccion(Atraccion->datos->headFila,Atraccion->datos->capacidad,&(Atraccion->datos->contadorUso));
+        atenderVisitantesEnAtraccion(Atraccion->datos->headFila,Atraccion->datos->capacidad,&(Atraccion->datos->contadorUso));
     }
 }
 
@@ -776,7 +776,7 @@ void mostrarEstadoFilaAtraccion(struct NodoAtracciones *Atraccion) /*Funcion que
     int TiempoEstimado;
     if(Atraccion!=NULL && Atraccion->datos!=NULL)
     {
-        mostrarFilaVisitantes(Atraccion->datos->headFila);
+        mostrarVisitantesEnFila(Atraccion->datos->headFila);
 
         TiempoEstimado=estimarTiempoEspera(Atraccion->datos->headFila,Atraccion->datos->capacidad,Atraccion->datos->duracion);
 
@@ -868,7 +868,7 @@ int contarPersonasAtraccion(struct NodoAtracciones *Atraccion)
 {
     if(Atraccion!=NULL && Atraccion->datos!=NULL)
     {
-        return contarCantidadPersonasFila(Atraccion->datos->headFila);
+        return contarPersonasEnFila(Atraccion->datos->headFila);
     }
     return 0;
 }
@@ -926,7 +926,7 @@ void formarEnFilaAtraccion(struct NodoAtracciones *Atraccion,struct Visitante *C
             }
             else
             {
-                agregarVisitanteFila(Atraccion->datos->headFila,Cliente);
+                agregarVisitanteAFila(Atraccion->datos->headFila,Cliente);
                 printf("El visitante ha sido formado exitosamente en la fila\n");
             }
         }
@@ -955,7 +955,7 @@ void atenderAtraccionUnaVez(struct NodoAtracciones *Atraccion)
 {
     if(Atraccion!=NULL && Atraccion->datos!=NULL)
     {
-        atenderFilasUnaVez(Atraccion->datos->headFila,Atraccion->datos->capacidad,&(Atraccion->datos->contadorUso));
+        atenderFilaUnaVez(Atraccion->datos->headFila,Atraccion->datos->capacidad,&(Atraccion->datos->contadorUso));
     }
 }
 
@@ -995,14 +995,14 @@ int sumarCapacidadAtracciones(struct NodoAtracciones *nodo) {
 /*Funciones Publicas de zona tematica*/
 
 /*Busca una zona por su nombre y retorna su struct ZonaTematica*/
-struct ZonaTematica * buscarZona (struct NodoZonaTematica * headZona, char *nombre) {
+struct ZonaTematica * buscarZonaTematica (struct NodoZonaTematica * headZona, char *nombre) {
     struct NodoZonaTematica * rec;
 
     if (headZona != NULL) {
         rec = headZona;
         do {
             /*Asumimos que solo puede buscar una atraccion a la vez*/
-            if (miStrCaseCmp (rec->datos -> nombre, nombre) == 0)
+            if (compararCadenasIgnorandoMayusculas (rec->datos -> nombre, nombre) == 0)
                 return rec -> datos;
 
             rec= rec -> siguiente;
@@ -1027,7 +1027,7 @@ struct ZonaTematica *quitarZona(struct NodoZonaTematica **headZona, char *nombre
         }
 
         /* Si el que queremos quitar es el head*/
-        if(miStrCaseCmp((*headZona)->datos->nombre, nombre) == 0)
+        if(compararCadenasIgnorandoMayusculas((*headZona)->datos->nombre, nombre) == 0)
         {
             quitado = (*headZona)->datos;
 
@@ -1049,7 +1049,7 @@ struct ZonaTematica *quitarZona(struct NodoZonaTematica **headZona, char *nombre
 
             do {
                 /* Buscamos mirando un nodo hacia adelante */
-                if (miStrCaseCmp(rec->siguiente->datos->nombre, nombre) == 0)
+                if (compararCadenasIgnorandoMayusculas(rec->siguiente->datos->nombre, nombre) == 0)
                 {
                     quitado=rec->siguiente->datos;
                     rec->siguiente = rec->siguiente->siguiente; /* Lo sacamos y conectamos los de alrededor */
@@ -1222,7 +1222,7 @@ int capacidadSuficienteZona(struct ZonaTematica *zona) {
     else return 0;
 }
 
-int cantidadVistantesZona(struct NodoZonaTematica *zona) {
+int contarVisitantesEnZona(struct NodoZonaTematica *zona) {
     return contarVisitantesAtraccionesOperativas(zona->datos->raizAtracciones);
 }
 
@@ -1686,7 +1686,7 @@ void menuInsertarVisitante(struct NodoVisitantes *headVisitantes) {
     } while (seleccionEstado > 4 || seleccionEstado < 1);
 
     /* Validamos que la entrada no esté usada*/
-    if (miStrCaseCmp(entrada.estado, "Activa") != 0) {
+    if (compararCadenasIgnorandoMayusculas(entrada.estado, "Activa") != 0) {
         printf("\nError: La entrada no es valida, o ya fue utlizada, esta anulada o vencida.\n");
         printf("Interrumpiendo el registro del visitante...\n");
         return;
@@ -1738,7 +1738,7 @@ void menuInsertarVisitante(struct NodoVisitantes *headVisitantes) {
 
     if (nuevoVisitante != NULL)
     {
-        visitanteInsertar(headVisitantes, nuevoVisitante);
+        insertarVisitante(headVisitantes, nuevoVisitante);
         printf("\n----------------------------------------\n");
         printf("El visitante '%s' fue ingresado a la lista.\n", nombre);
     }
@@ -1767,7 +1767,7 @@ void menuEliminarVisitante(struct NodoVisitantes **headVisitantes) {
     codigoBuscado = pedirCadena();
 
     while (rec != NULL) {
-        if (miStrCaseCmp(rec->datos->entrada.codigo, codigoBuscado) == 0) {
+        if (compararCadenasIgnorandoMayusculas(rec->datos->entrada.codigo, codigoBuscado) == 0) {
             visitanteEncontrado = rec->datos;
             break;
         }
@@ -1789,7 +1789,7 @@ void menuContarTotalVisitantes(struct NodoVisitantes *headVisitantes) {
     printf("        TOTAL DE VISITANTES             \n");
     printf("========================================\n");
 
-    total = visitanteTotalContar(headVisitantes);
+    total = contarVisitantesTotales(headVisitantes);
 
     printf("\n>> El numero total historico de visitantes registrados es: %d\n", total);
 }
@@ -1801,7 +1801,7 @@ void menuContarVisitantesAdentro(struct NodoVisitantes *headVisitantes) {
     printf("      VISITANTES DENTRO DE IBCLANDIA    \n");
     printf("========================================\n");
 
-    adentro = visitantesAdentroContar(headVisitantes);
+    adentro = contarVisitantesDentro(headVisitantes);
 
     printf("\n>> Actualmente hay %d visitantes explorando el parque.\n", adentro);
 }
@@ -1827,7 +1827,7 @@ void menuQuitarVisitante(struct NodoVisitantes **headVisitantes) {
 
     /* Buscar al visitante por su código*/
     while (rec != NULL) {
-        if (miStrCaseCmp(rec->datos->entrada.codigo, codigoBuscado) == 0) {
+        if (compararCadenasIgnorandoMayusculas(rec->datos->entrada.codigo, codigoBuscado) == 0) {
             visitanteEncontrado = rec->datos;
             break;
         }
@@ -1853,12 +1853,12 @@ void menuListarVisitantes(struct NodoVisitantes *headVisitantes) {
     printf("          LISTADO DE VISITANTES         \n");
     printf("========================================\n");
 
-    visitantesListar(headVisitantes);
+    listarVisitantes(headVisitantes);
 
     printf("\n");
 }
 
-void menuSalidaVisitantes(struct NodoVisitantes *headVisitantes) {
+void menuRegistrarSalidaVisitante(struct NodoVisitantes *headVisitantes) {
     char *codigoEntrada;
     int horaFin, minutosFin;
     struct Visitante *visitanteEncontrado = NULL;
@@ -1878,7 +1878,7 @@ void menuSalidaVisitantes(struct NodoVisitantes *headVisitantes) {
     codigoEntrada = pedirCadena();
 
     while (rec != NULL) {
-        if (miStrCaseCmp(rec->datos->entrada.codigo, codigoEntrada) == 0) {
+        if (compararCadenasIgnorandoMayusculas(rec->datos->entrada.codigo, codigoEntrada) == 0) {
             visitanteEncontrado = rec->datos;
             break;
         }
@@ -1889,7 +1889,7 @@ void menuSalidaVisitantes(struct NodoVisitantes *headVisitantes) {
         scanf("%d", &horaFin);
         printf("Ingrese SOLO los minutos de salida: \n");
         scanf("%d", &minutosFin);
-        visitanteMarcarSalida (headVisitantes, codigoEntrada, horaFin, minutosFin);
+        marcarSalidaVisitante (headVisitantes, codigoEntrada, horaFin, minutosFin);
         printf("La salida ha sido marcada correctamente.\n");
         limpiarBuffer();
     }
@@ -1916,7 +1916,7 @@ void menuRecaudacionDiaria(struct NodoVisitantes *headVisitantes) {
     printf("========================================\n");
 }
 
-void menuVisitanteBuscar(struct NodoVisitantes *headVisitantes) {
+void menuBuscarVisitante(struct NodoVisitantes *headVisitantes) {
     char *codigoBuscado;
     struct Visitante *visitanteEncontrado;
 
@@ -1963,7 +1963,7 @@ void menuVisitanteBuscar(struct NodoVisitantes *headVisitantes) {
     }
 }
 
-void menuVisitanteModificar(struct NodoVisitantes *headVisitantes) {
+void menuModificarVisitante(struct NodoVisitantes *headVisitantes) {
     char *codigoBuscado;
     char *nuevoNombre;
     int nuevaEdad;
@@ -2009,7 +2009,7 @@ void menuVisitanteModificar(struct NodoVisitantes *headVisitantes) {
     printf("Ingrese el nuevo estado de entrada (ej. Activa, Utilizada): \n");
     nuevoEstado = pedirCadena();
 
-    resultado = visitanteModificar(headVisitantes, codigoBuscado, nuevoNombre, nuevaEdad, nuevaAltura, nuevoTipoEntrada, nuevoEstado);
+    resultado = modificarVisitante(headVisitantes, codigoBuscado, nuevoNombre, nuevaEdad, nuevaAltura, nuevoTipoEntrada, nuevoEstado);
 
     printf("\n----------------------------------------\n");
     if (resultado == 1) {
@@ -2052,47 +2052,47 @@ void menuVisitantes(struct NodoVisitantes **headVisitantes) {
         switch(opcion) {
             case '1':
                 menuInsertarVisitante(*headVisitantes);
-                PausarPantalla();
+                pausarPantalla();
                 break;
 
             case '2':
                 menuEliminarVisitante(headVisitantes);
-                PausarPantalla();
+                pausarPantalla();
                 break;
 
             case '3':
                 menuContarTotalVisitantes(*headVisitantes);
-                PausarPantalla();
+                pausarPantalla();
                 break;
 
             case '4':
                 menuContarVisitantesAdentro(*headVisitantes);
-                PausarPantalla();
+                pausarPantalla();
                 break;
 
             case '5':
                 menuQuitarVisitante(headVisitantes);
-                PausarPantalla();
+                pausarPantalla();
                 break;
 
             case '6':
                 menuListarVisitantes(*headVisitantes);
-                PausarPantalla();
+                pausarPantalla();
                 break;
 
             case '7':
-                menuSalidaVisitantes(*headVisitantes);
-                PausarPantalla();
+                menuRegistrarSalidaVisitante(*headVisitantes);
+                pausarPantalla();
                 break;
 
             case '8':
-                menuVisitanteModificar(*headVisitantes);
-                PausarPantalla();
+                menuModificarVisitante(*headVisitantes);
+                pausarPantalla();
                 break;
 
             case '9':
-                menuVisitanteBuscar(*headVisitantes);
-                PausarPantalla();
+                menuBuscarVisitante(*headVisitantes);
+                pausarPantalla();
                 break;
 
             case '0':
@@ -2101,7 +2101,7 @@ void menuVisitantes(struct NodoVisitantes **headVisitantes) {
 
             default:
                 printf("\nError: Opcion invalida. Intente de nuevo.\n");
-                PausarPantalla();
+                pausarPantalla();
                 break;
         }
     } while(opcion != '0');
@@ -2197,7 +2197,7 @@ void menuBuscarZona(struct NodoZonaTematica *headZona) {
     printf("Ingrese el nombre de la zona a buscar: \n");
     nombre = pedirCadena();
 
-    zonaBuscada = buscarZona(headZona, nombre);
+    zonaBuscada = buscarZonaTematica(headZona, nombre);
 
     printf("\n----------------------------------------\n");
     if (zonaBuscada != NULL) {
@@ -2279,7 +2279,7 @@ void menuContarZonasTematicas(struct NodoZonaTematica *headZona) {
     }
 }
 
-void menuCapacidadSuficienteZona(struct NodoZonaTematica *headZona) {
+void menuVerificarCapacidadZona(struct NodoZonaTematica *headZona) {
     char *nombre;
     struct ZonaTematica *zonaBuscada;
 
@@ -2295,7 +2295,7 @@ void menuCapacidadSuficienteZona(struct NodoZonaTematica *headZona) {
     printf("Ingrese el nombre de la zona a consultar: \n");
     nombre = pedirCadena();
 
-    zonaBuscada = buscarZona(headZona, nombre);
+    zonaBuscada = buscarZonaTematica(headZona, nombre);
 
     printf("\n----------------------------------------\n");
 
@@ -2335,7 +2335,7 @@ void menuFormarEnFilaAtraccionZona(struct NodoZonaTematica *headZona, struct Nod
     printf("Ingrese el nombre de la zona tematica: \n");
     nombreZona = pedirCadena();
 
-    zonaBuscada = buscarZona(headZona, nombreZona);
+    zonaBuscada = buscarZonaTematica(headZona, nombreZona);
     if (zonaBuscada == NULL) {
         printf("Error: La zona '%s' no existe en el parque.\n", nombreZona);
         return;
@@ -2383,30 +2383,30 @@ void menuZonasTematicas(struct NodoZonaTematica **headZona)
         switch(opcion) {
             case '1':
                 menuAgregarZonaTematica(headZona);
-                PausarPantalla();
+                pausarPantalla();
                 break;
             case '2':
                 menuBuscarZona(*headZona); /* Pasa solo el puntero*/
-                PausarPantalla();
+                pausarPantalla();
                 break;
             case '3':
                 menuQuitarZona(headZona); /* Pasa el doble puntero*/
-                PausarPantalla();
+                pausarPantalla();
                 break;
             case '4':
                 menuListarZonasAltaCapacidad(*headZona); /* Pasa solo el puntero*/
-                PausarPantalla();
+                pausarPantalla();
                 break;
             case '5':
                 menuContarZonasTematicas(*headZona); /* Pasa solo el puntero*/
-                PausarPantalla();
+                pausarPantalla();
                 break;
             case '0':
                 printf("\nVolviendo al menu principal...\n");
                 break;
             default:
                 printf("\nOpcion invalida. Intente nuevamente.\n");
-                PausarPantalla();
+                pausarPantalla();
                 break;
         }
     }while(opcion != '0');
@@ -2423,7 +2423,7 @@ void menuAtracciones(struct NodoZonaTematica **headZona) {
     printf("Primero indique el nombre de la zona tematica que desea operar: \n");
     ZonaObjetivo=pedirCadena();
 
-    Buscar=buscarZona(*headZona,ZonaObjetivo);
+    Buscar=buscarZonaTematica(*headZona,ZonaObjetivo);
 
     if(Buscar!=NULL)
     {
@@ -2450,29 +2450,29 @@ void menuAtracciones(struct NodoZonaTematica **headZona) {
             switch(opcion) {
                 case '1':
                     menuAgregarAtraccion(&Buscar->raizAtracciones);
-                    PausarPantalla();
+                    pausarPantalla();
                     break;
                 case '2':
                     menuMostrarAtraccion(Buscar->raizAtracciones);
-                    PausarPantalla();
+                    pausarPantalla();
                     break;
                 case '3':
                     menuModificarAtraccion(&Buscar->raizAtracciones);
-                    PausarPantalla();
+                    pausarPantalla();
                     break;
                 case '4':
                     menuEliminarAtraccion(&Buscar->raizAtracciones);
-                    PausarPantalla();
+                    pausarPantalla();
                     break;
                 case '5':
                     listarAtracciones(Buscar->raizAtracciones);
-                    PausarPantalla();
+                    pausarPantalla();
                     break;
                 case '0':
                     break;
                 default:
                     printf("Opcion invalida.\n");
-                    PausarPantalla();
+                    pausarPantalla();
                     break;
                 }
 
@@ -2482,7 +2482,7 @@ void menuAtracciones(struct NodoZonaTematica **headZona) {
     else
     {
         printf("La zona ingresada no existe en el parque");
-        PausarPantalla();
+        pausarPantalla();
     }
 }
 
@@ -2516,7 +2516,7 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
 
     nombreZona=pedirCadena();
 
-    Buscada=buscarZona(*headZona,nombreZona);
+    Buscada=buscarZonaTematica(*headZona,nombreZona);
 
     if(Buscada!=NULL)
     {
@@ -2530,7 +2530,7 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
         if(AtraccionActual==NULL)
         {
             printf("La atraccion %s no existe en el parque\n",nombreAtraccion);
-            PausarPantalla();
+            pausarPantalla();
             return;
         }
 
@@ -2564,7 +2564,7 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
                     /* Si no caben mas visitantes en la zona */
                     if (!capacidadSuficienteZona(Buscada)) {
                         printf("La zona '%s' esta llena, no se puede ingresar un nuevo visitante en este momento!\n", Buscada->nombre);
-                        PausarPantalla();
+                        pausarPantalla();
                         break;
                     }
 
@@ -2609,7 +2609,7 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
                     }
 
                     free(codigoVisitante); /* Liberamos la memoria del texto ingresado por teclado */
-                    PausarPantalla();
+                    pausarPantalla();
                     break;
                 }
 
@@ -2635,12 +2635,12 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
                     {
                         printf("Error! -> La opcion que selecciono no existe\n");
                     }
-                    PausarPantalla();
+                    pausarPantalla();
                     break;
 
                 case '3':
                     mostrarEstadoFilaAtraccion(AtraccionActual);
-                    PausarPantalla();
+                    pausarPantalla();
                     break;
 
                 case '4':
@@ -2678,13 +2678,13 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
                 case '6':
                     tiempo=estimarTiempoAtraccion(AtraccionActual);
                     printf("Tiempo de espera estimado: %d minutos\n", tiempo);
-                    PausarPantalla();
+                    pausarPantalla();
                     break;
 
                 case '7':
                     cantidad=contarPersonasAtraccion(AtraccionActual);
                     printf("\nPersonas en fila: %d\n", cantidad);
-                    PausarPantalla();
+                    pausarPantalla();
                     break;
 
                 case '8':
@@ -2715,13 +2715,13 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
                     {
                         printf("La lista ya esta vacia\n");
                     }
-                    PausarPantalla();
+                    pausarPantalla();
                     break;
 
                 case '0': break;
 
                 default: printf("Opcion invalida.\n");
-                PausarPantalla();
+                pausarPantalla();
                 break;
             }
         } while(opcion != '0');
@@ -2730,7 +2730,7 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
     else
     {
         printf("Error! -> La zona tematica ingresada no existe!\n");
-        PausarPantalla();
+        pausarPantalla();
     }
 }
 
@@ -2792,18 +2792,18 @@ void menuCierre(struct NodoVisitantes *headVisitantes, struct NodoZonaTematica *
         switch (opcion) {
             case '1':
                 menuRecaudacionDiaria(headVisitantes);
-                PausarPantalla();
+                pausarPantalla();
                 break;
             case '2':
                 menuZonaMasPopular(*headZona);
-                PausarPantalla();
+                pausarPantalla();
                 break;
             case '0':
                 printf("\nVolviendo al menu principal...\n");
                 break;
             default:
                 printf("\nError: Opcion no valida. Intente de nuevo.\n");
-                PausarPantalla();
+                pausarPantalla();
                 break;
         }
     } while (opcion != '0');
@@ -2855,7 +2855,7 @@ int main(void) {
                 else
                 {
                     printf("Error! No hay ninguna zona tematica creada!\n");
-                    PausarPantalla();
+                    pausarPantalla();
                 }
                 break;
             case '4':
@@ -2866,7 +2866,7 @@ int main(void) {
                 else
                 {
                     printf("Error! No hay ninguna zona tematica creada!\n");
-                    PausarPantalla();
+                    pausarPantalla();
                 }
                 break;
             case '5': menuCierre(IBCLandia->headVisitantes, &IBCLandia->headZonaTematica); break;
