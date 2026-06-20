@@ -1,7 +1,7 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 struct Entrada {
     char *codigo;
@@ -77,14 +77,14 @@ char *copiarCadena(char *cadena) {
     /* Esta funcion simplemente copia las cadenas */
 
     char *cadenaCopiada;
-    int largo; /* Variable para guardar la cantidad char tiene la cadena a copiar, incluido el '\0' */
+    size_t largo; /* Variable para guardar la cantidad char tiene la cadena a copiar, incluido el '\0' */
 
     /* Caso de entregarle un NULL a la función */
-    if (!cadena) return NULL;
+    if (cadena == NULL) return NULL;
 
     largo = strlen(cadena) + 1;
     /* asignamos memoria y copiamos */
-    cadenaCopiada = (char *)malloc(sizeof(char) * largo);
+    cadenaCopiada = (char *)malloc(largo);
     strcpy(cadenaCopiada, cadena);
 
     return cadenaCopiada;
@@ -97,7 +97,7 @@ void limpiarBuffer(void) {
 
 char *pedirCadena(void) {
 
-    int posicion;
+    size_t posicion;
 
     /* hacemos un buffer de 99 caracteres, suficientes para cualquier nombre que se ingrese en este programa */
     char buffer[100];
@@ -108,6 +108,38 @@ char *pedirCadena(void) {
     buffer[posicion] = '\0';
 
     return copiarCadena(buffer);
+}
+
+int leerEntero(char *mensaje){
+    char entrada[100];
+    int i;
+    int numero = 0;
+    int repetir = 1, esValido; /* Variable de control del ciclo */
+
+    while(repetir){
+        printf("%s", mensaje);
+        scanf(" %99s", entrada);
+
+        i = 0;
+        if (entrada[i] == '\0'){
+            printf("Entrada invalida. Debe ingresar un numero entero.\n");
+        }else{
+            esValido = 1;
+            while(entrada[i] != '\0' && esValido == 1){
+                if (entrada[i] < '0' || entrada[i] > '9'){
+                    printf("\nEntrada invalida. Debe ingresar solo numeros.\n\n");
+                    esValido = 0; /* Esto hace que el ciclo interno termine naturalmente */
+                }
+                i++;
+            }
+            /* Si pasó la validación de caracteres, convertimos y terminamos el bucle principal */
+            if (esValido == 1) {
+                numero = (int)strtol(entrada, NULL, 10);
+                repetir = 0; /* Salimos del ciclo limpiamente sin usar break */
+            }
+        }
+    }
+    return numero;
 }
 
 int compararCadenasIgnorandoMayusculas(const char *s1,const char *s2)
@@ -295,7 +327,7 @@ struct Visitante *visitanteBuscar(struct NodoVisitantes *headVisitantes, char *c
 }
 
 int modificarVisitante(struct NodoVisitantes *headVisitantes, char *codigoBuscado, char *nuevoNombre, int nuevaEdad, float nuevaAltura, char *nuevoTipoEntrada, char *nuevoEstado) {
-    struct Visitante *visitanteEncontrado;
+    struct Visitante *visitanteEncontrado = NULL;
 
     visitanteEncontrado = visitanteBuscar(headVisitantes, codigoBuscado);
 
@@ -319,7 +351,7 @@ int modificarVisitante(struct NodoVisitantes *headVisitantes, char *codigoBuscad
 
 struct NodoFila *crearNodoFilas(struct Visitante *Datos)
 {
-    struct NodoFila *PuestoFila;
+    struct NodoFila *PuestoFila = NULL;
 
     PuestoFila=(struct NodoFila*)malloc(sizeof(struct NodoFila));
 
@@ -339,8 +371,8 @@ struct NodoFila *crearFilaVacia(void) /*La siguiente funcion creara la fila con 
 
 void agregarVisitanteAFila(struct NodoFila *HeadFila, struct Visitante *Cliente) /*La siguiente funcion agregara un visitante a la fila de una atraccion*/
 {
-    struct NodoFila *rec;
-    struct NodoFila *NodoPrivado; /*Nodo que no se vera en ningun momento en el main y solo se sabe que existe en este archivo*/
+    struct NodoFila *rec = NULL;
+    struct NodoFila *NodoPrivado = NULL; /*Nodo que no se vera en ningun momento en el main y solo se sabe que existe en este archivo*/
 
     NodoPrivado=crearNodoFilas(Cliente);
 
@@ -366,7 +398,7 @@ void agregarVisitanteAFila(struct NodoFila *HeadFila, struct Visitante *Cliente)
 }
 
 void eliminarVisitanteDeFila(char *codigo, struct NodoFila *HeadFila) {
-    struct NodoFila *rec, *anterior;
+    struct NodoFila *rec = NULL, *anterior = NULL;
     rec = HeadFila->siguiente;
     anterior = HeadFila;
 
@@ -382,7 +414,7 @@ void eliminarVisitanteDeFila(char *codigo, struct NodoFila *HeadFila) {
 
 int contarPersonasEnFila(struct NodoFila *HeadFila) /*La siguiente funcion contara la cantidad de personas que esten actualmente en la fila*/
 {
-    struct NodoFila *rec;
+    struct NodoFila *rec = NULL;
     int Contador=0;
 
     rec=HeadFila->siguiente;
@@ -457,7 +489,7 @@ struct Visitante **vaciarTodaLaFila( struct NodoFila *HeadFila) /*La siguiente f
 
 void mostrarVisitantesEnFila(struct NodoFila *HeadFila) /*La siguiente funcion mostrara toda la fila actual de la atraccion correspondiente*/
 {
-    struct NodoFila *rec;
+    struct NodoFila *rec = NULL;
     int posicion=1;
 
     if(HeadFila==NULL ||HeadFila->siguiente==NULL)
@@ -482,8 +514,8 @@ void mostrarVisitantesEnFila(struct NodoFila *HeadFila) /*La siguiente funcion m
 }
 
 struct Visitante *buscarVisitanteEnFila(struct NodoFila *HeadFila, char *codigo) {
-    struct NodoFila *rec;
-    struct Visitante *Buscado;
+    struct NodoFila *rec = NULL;
+    struct Visitante *Buscado = NULL;
 
     rec = HeadFila->siguiente;
 
@@ -499,7 +531,7 @@ struct Visitante *buscarVisitanteEnFila(struct NodoFila *HeadFila, char *codigo)
 
 void atenderVisitantesEnAtraccion(struct NodoFila *HeadFila,int capacidad, int *usos) /*La siguiente funcion atendera a los visitante, los quitara de la fila y los subira a la atraccion*/
 {
-    struct NodoFila *rec;
+    struct NodoFila *rec = NULL;
     int ContarPersonas,i,PersonasASubir;
 
     if(HeadFila!=NULL) /*Si existe la fila*/
@@ -541,21 +573,19 @@ void atenderVisitantesEnAtraccion(struct NodoFila *HeadFila,int capacidad, int *
 
 void ordenarEvacuadosPorEdad(struct Visitante **Evacuados,int Cantidad)
 {
-    struct Visitante *Copia;    /*Ordenamiento bubble sort*/
+    struct Visitante *Copia = NULL;    /*Ordenamiento bubble sort*/
     int i,j;
 
     for(i=0;i<Cantidad-1;i++)
     {
-
         for(j=0;j<Cantidad-i-1;j++)
         {
-            if(Evacuados[j]->edad>Evacuados[j+1]->edad)
-            {
-                Copia=Evacuados[j];
-                Evacuados[j]=Evacuados[j+1];
-                Evacuados[j+1]=Copia;
-
-
+            if (Evacuados[j] != NULL && Evacuados[j+1] != NULL) {
+                if (Evacuados[j]->edad > Evacuados[j+1]->edad) {
+                    Copia = Evacuados[j];
+                    Evacuados[j] = Evacuados[j+1];
+                    Evacuados[j+1] = Copia;
+                }
             }
         }
     }
@@ -563,7 +593,7 @@ void ordenarEvacuadosPorEdad(struct Visitante **Evacuados,int Cantidad)
 
 void atenderFilaUnaVez(struct NodoFila *HeadFila,int capacidad,int *usos)
 {
-    struct NodoFila *rec;
+    struct NodoFila *rec = NULL;
     int CantidadPersonas,i,PersonasASubir;
 
 
@@ -670,7 +700,7 @@ struct NodoAtracciones *buscarAtraccion(struct NodoAtracciones *arbol, char *nom
     /* Función de búsqueda */
 
     int comparacion;
-    struct NodoAtracciones *atraccionEncontrada;
+    struct NodoAtracciones *atraccionEncontrada = NULL;
     if(!arbol)
     {return NULL;}
     comparacion = strcmp(arbol->datos->nombre, nombreBuscado);
@@ -813,8 +843,8 @@ void modificarAtraccion(struct NodoAtracciones **raiz, char *nombreViejo, char *
                         int capacidad, int duracion, float alturaMinima, int edadMinima,
                         char *restriccionSeguridad, char *estado) {
 
-    struct NodoAtracciones *encontrado, *nombreDuplicado;
-    struct Atraccion *nuevaAtraccion;
+    struct NodoAtracciones *encontrado = NULL, *nombreDuplicado = NULL;
+    struct Atraccion *nuevaAtraccion = NULL;
 
     /* Primero buscamos si la función a modificar existe en nuestro árbol */
     encontrado = buscarAtraccion(*raiz, nombreViejo);
@@ -979,9 +1009,7 @@ int sumarUsosAtracciones(struct NodoAtracciones *raiz) {
         usosActual = raiz->datos->contadorUso;
     }
 
-    return usosActual +
-           sumarUsosAtracciones(raiz->izquierdo) +
-           sumarUsosAtracciones(raiz->derecho);
+    return usosActual + sumarUsosAtracciones(raiz->izquierdo) + sumarUsosAtracciones(raiz->derecho);
 }
 
 int sumarCapacidadAtracciones(struct NodoAtracciones *nodo) {
@@ -996,7 +1024,7 @@ int sumarCapacidadAtracciones(struct NodoAtracciones *nodo) {
 
 /*Busca una zona por su nombre y retorna su struct ZonaTematica*/
 struct ZonaTematica * buscarZonaTematica (struct NodoZonaTematica * headZona, char *nombre) {
-    struct NodoZonaTematica * rec;
+    struct NodoZonaTematica * rec = NULL;
 
     if (headZona != NULL) {
         rec = headZona;
@@ -1016,7 +1044,8 @@ struct ZonaTematica * buscarZonaTematica (struct NodoZonaTematica * headZona, ch
 struct ZonaTematica *quitarZona(struct NodoZonaTematica **headZona, char *nombre)
 {
     struct ZonaTematica *quitado=NULL;
-    struct NodoZonaTematica *rec;
+    struct NodoZonaTematica *rec = NULL;
+    struct NodoZonaTematica *aux = NULL;
 
     if(*headZona != NULL)
     {
@@ -1030,6 +1059,7 @@ struct ZonaTematica *quitarZona(struct NodoZonaTematica **headZona, char *nombre
         if(compararCadenasIgnorandoMayusculas((*headZona)->datos->nombre, nombre) == 0)
         {
             quitado = (*headZona)->datos;
+            aux = *headZona;
 
             /* Si la lista tiene más de un nodo*/
             if((*headZona)->siguiente != *headZona)
@@ -1041,6 +1071,7 @@ struct ZonaTematica *quitarZona(struct NodoZonaTematica **headZona, char *nombre
             {
                 *headZona=NULL;
             }
+            free(aux);
             return quitado;
         }
         else
@@ -1053,6 +1084,7 @@ struct ZonaTematica *quitarZona(struct NodoZonaTematica **headZona, char *nombre
                 {
                     quitado=rec->siguiente->datos;
                     rec->siguiente = rec->siguiente->siguiente; /* Lo sacamos y conectamos los de alrededor */
+                    free(aux);
                     return quitado;
                 }
                 rec=rec->siguiente;
@@ -1066,8 +1098,8 @@ struct ZonaTematica *quitarZona(struct NodoZonaTematica **headZona, char *nombre
 /*REGISTRAR ZONA TEMATICA*/
 void agregarZonaTematica(struct NodoZonaTematica **headZona, char *nombre, char *codigo, char *tematica, int capacidad, struct Horario horarios) {
 
-    struct NodoZonaTematica *nuevo, *rec;
-    struct ZonaTematica *zona;
+    struct NodoZonaTematica *nuevo = NULL, *rec = NULL;
+    struct ZonaTematica *zona = NULL;
 
     zona = (struct ZonaTematica *) malloc(sizeof(struct ZonaTematica));
     /*Solo se copia porque se piden en el main*/
@@ -1101,7 +1133,7 @@ void agregarZonaTematica(struct NodoZonaTematica **headZona, char *nombre, char 
 /*LISTAR ZONAS TEMATICAS*/
 void listarZonasTematicas(struct NodoZonaTematica *headZona)
 {
-    struct NodoZonaTematica *rec;
+    struct NodoZonaTematica *rec = NULL;
 
     if (headZona != NULL) {
 
@@ -1133,7 +1165,7 @@ void listarZonasTematicas(struct NodoZonaTematica *headZona)
 /*MODIFICAR ZONA TEMATICA */
 int modificarZonaTematica(struct NodoZonaTematica *headZona, char *codigoBuscar, char *nuevoNombre, char *nuevaTematica, int nuevaCapacidad)
 {
-    struct NodoZonaTematica *rec;
+    struct NodoZonaTematica *rec = NULL;
 
     if (headZona != NULL) {
 
@@ -1162,7 +1194,7 @@ int modificarZonaTematica(struct NodoZonaTematica *headZona, char *codigoBuscar,
 
 void listarZonasConAltaCapacidad(struct NodoZonaTematica *headZona, int limite)
 {
-    struct NodoZonaTematica *rec;
+    struct NodoZonaTematica *rec = NULL;
     int encontrado = 0;
 
     if (headZona != NULL) {
@@ -1195,7 +1227,7 @@ void listarZonasConAltaCapacidad(struct NodoZonaTematica *headZona, int limite)
 
 int contarZonasTematicas(struct NodoZonaTematica *headZona)
 {
-    struct NodoZonaTematica *rec;
+    struct NodoZonaTematica *rec = NULL;
     int contador = 0;
 
     if (headZona != NULL) {
@@ -1257,8 +1289,8 @@ void formarEnFilaAtraccionZona(struct ZonaTematica *zona, struct NodoAtracciones
 void menuAgregarAtraccion(struct NodoAtracciones **raiz)
 {
 
-    struct Atraccion *nuevaAtraccion;
-    char *restriccionSeguridad, *estado = NULL, *nombre;
+    struct Atraccion *nuevaAtraccion = NULL;
+    char *restriccionSeguridad = NULL, *estado = NULL, *nombre = NULL, *entradaTexto = NULL;
     int capacidad, duracion, edadMinima, seleccionEstado, seleccionRestriccion;
     float alturaMinima;
 
@@ -1269,8 +1301,7 @@ void menuAgregarAtraccion(struct NodoAtracciones **raiz)
         /* Hacemos todos los ingresos por teclado */
         printf("Ingrese el nombre de la atraccion: ");
         nombre = pedirCadena();
-        printf("Ingrese la capacidad de la atraccion: ");
-        scanf("%d", &capacidad);
+        capacidad = leerEntero("Ingrese la capacidad de la atraccion: ");
         if(capacidad<=0)
         {
             printf("Error! -> la capacidad ingresada no es valida!\n");
@@ -1278,8 +1309,7 @@ void menuAgregarAtraccion(struct NodoAtracciones **raiz)
             return;
         }
 
-        printf("Ingrese la duración de la atraccion (en minutos): ");
-        scanf("%d", &duracion);
+        duracion = leerEntero("Ingrese la duracion de la atraccion (en minutos): ");
         if(duracion<=0)
         {
             printf("Error! -> la duracion ingresada no es valida!\n");
@@ -1287,8 +1317,7 @@ void menuAgregarAtraccion(struct NodoAtracciones **raiz)
             return;
         }
 
-        printf("Ingrese la edad mínima para la atraccion: ");
-        scanf("%d", &edadMinima);
+        edadMinima = leerEntero("Ingrese la edad minima para la atraccion: ");
         if(edadMinima<=0)
         {
             printf("Error! -> la edad minima ingresada no es valida!\n");
@@ -1297,7 +1326,9 @@ void menuAgregarAtraccion(struct NodoAtracciones **raiz)
         }
 
         printf("Ingrese la altura minima para la atracción (en metros con decimal): ");
-        scanf("%f", &alturaMinima);
+        entradaTexto = pedirCadena();
+        alturaMinima = strtof(entradaTexto, NULL);
+        free(entradaTexto);
         if(alturaMinima<=0)
         {
             printf("Error! -> la altura minima ingresada no es valida!");
@@ -1313,7 +1344,7 @@ void menuAgregarAtraccion(struct NodoAtracciones **raiz)
             printf("Presione 2 para establecer la restriccion de la atraccion como 'No apto para mujeres embarazadas'\n");
             printf("Presione 3 para establecer la restriccion de la atraccion como 'Advertencia -> La atraccion tiene luces que pueden afectar a personas con epilepsia'\n");
             printf("Presione 4 si la atraccion no tiene ninguna restriccion 'Ninguna'\n");
-            scanf("%d", &seleccionRestriccion);
+            seleccionRestriccion = leerEntero("Seleccione una opcion: ");
             limpiarBuffer();
 
             switch (seleccionRestriccion) {
@@ -1341,7 +1372,7 @@ void menuAgregarAtraccion(struct NodoAtracciones **raiz)
             printf("Presione 2 para establecer la atraccion como 'En mantenimiento'\n");
             printf("Presione 3 para establecer la atraccion como 'Fuera de servicio'\n");
             printf("Presione 4 si la atraccion está 'Cerrada por horario'\n");
-            scanf("%d", &seleccionEstado);
+            seleccionEstado = leerEntero("Seleccione una opcion: ");
             limpiarBuffer();
 
             switch (seleccionEstado) {
@@ -1375,8 +1406,8 @@ void menuAgregarAtraccion(struct NodoAtracciones **raiz)
 
 void menuEliminarAtraccion(struct NodoAtracciones **raiz)   /*Funcion para eliminar una atraccion especifica*/
 {
-    char *NombreBuscado;
-    struct NodoAtracciones *Encontrada;
+    char *NombreBuscado = NULL;
+    struct NodoAtracciones *Encontrada = NULL;
 
     printf("Ingrese el nombre de la atraccion que desea eliminar : ");
     NombreBuscado=pedirCadena(); /*Pedimos el nombre al usuario*/
@@ -1395,8 +1426,8 @@ void menuEliminarAtraccion(struct NodoAtracciones **raiz)   /*Funcion para elimi
 
 void menuVerEstadoFila(struct NodoAtracciones *raiz)
 {
-    struct NodoAtracciones *Buscada;
-    char *Nombre;
+    struct NodoAtracciones *Buscada = NULL;
+    char *Nombre = NULL;
     printf("Ingrese la atraccion que desea ver los datos de la fila : "); /*Pedimos el nombre al usuario*/
 
     Nombre=pedirCadena();
@@ -1416,8 +1447,8 @@ void menuVerEstadoFila(struct NodoAtracciones *raiz)
 
 void menuAtenderFila(struct NodoAtracciones *raiz)
 {
-    struct NodoAtracciones *Buscada;
-    char *Nombre;
+    struct NodoAtracciones *Buscada = NULL;
+    char *Nombre = NULL;
     printf("Ingrese la atraccion que desea atender : "); /*Pedimos la atraccion al usuario*/
 
     Nombre=pedirCadena();
@@ -1438,8 +1469,8 @@ void menuAtenderFila(struct NodoAtracciones *raiz)
 
 void menuMostrarAtraccion(struct NodoAtracciones *raiz)
 {
-    struct NodoAtracciones *Buscada;
-    char *Nombre;
+    struct NodoAtracciones *Buscada = NULL;
+    char *Nombre = NULL;
     printf("Ingrese la atraccion que desea ver : "); /*Pedimos el nombre al usuario*/
 
     Nombre=pedirCadena();
@@ -1459,10 +1490,10 @@ void menuMostrarAtraccion(struct NodoAtracciones *raiz)
 
 void menuModificarAtraccion(struct NodoAtracciones **raiz)
 {
-    char *nombreAtraccion,*nuevoNombre,*nuevaRestriccion,*nuevoEstado;
+    char *nombreAtraccion = NULL,*nuevoNombre = NULL,*nuevaRestriccion = NULL,*nuevoEstado = NULL, *entradaTextoFloat = NULL;
     int nuevaCapacidad,nuevaDuracion,nuevaEdadMinima,opcionNuevaRestriccion,opcionNuevoEstado;
     float nuevaAlturaMinima;
-    struct NodoAtracciones *objetivo;
+    struct NodoAtracciones *objetivo = NULL;
 
     printf("=============================================\n");
     printf("          Modificacion de Atraccion          \n");
@@ -1480,8 +1511,7 @@ void menuModificarAtraccion(struct NodoAtracciones **raiz)
             printf("\nIngrese el nuevo nombre de la atraccion : \n");
             nuevoNombre=pedirCadena();
 
-            printf("\nIngrese la nueva capacidad de la atraccion : \n");
-            scanf("%d",&nuevaCapacidad);
+            nuevaCapacidad = leerEntero("\nIngrese la nueva capacidad de la atraccion : \n");
             if(nuevaCapacidad<=0)
             {
                 printf("Error! -> la nueva capacidad ingresada no es valida!\n");
@@ -1489,17 +1519,17 @@ void menuModificarAtraccion(struct NodoAtracciones **raiz)
             }
 
 
-            printf("\nIngrese la nueva duracion de la atraccion (en minutos):\n");
-            scanf("%d",&nuevaDuracion);
+            nuevaDuracion = leerEntero("\nIngrese la nueva duracion de la atraccion (en minutos):\n");
             if(nuevaDuracion<=0)
             {
                 printf("\nError! -> la nueva duracion ingresada no es valida!\n");
                 return;
             }
 
-
             printf("\nIngrese la nueva altura minima de la atraccion : \n");
-            scanf("%f",&nuevaAlturaMinima);
+            entradaTextoFloat = pedirCadena();
+            nuevaAlturaMinima = strtof(entradaTextoFloat, NULL);
+            free(entradaTextoFloat);
             if(nuevaAlturaMinima<=0)
             {
                 printf("Error! -> la nueva altura minima ingresada no es valida!\n");
@@ -1507,8 +1537,7 @@ void menuModificarAtraccion(struct NodoAtracciones **raiz)
             }
 
 
-            printf("\nIngrese la nueva edad minima de la atraccion :\n");
-            scanf("%d",&nuevaEdadMinima);
+            nuevaEdadMinima = leerEntero("\nIngrese la nueva edad minima de la atraccion :\n");
             if(nuevaEdadMinima<=0)
             {
                 printf("\nError! -> la edad minima ingresada no es valida!\n");
@@ -1523,7 +1552,7 @@ void menuModificarAtraccion(struct NodoAtracciones **raiz)
         printf("Presione 2 para establecer la nueva restriccion de la atraccion como 'No apto para mujeres embarazadas'\n");
         printf("Presione 3 para establecer la nueva restriccion de la atraccion como 'Advertencia -> La atraccion tiene luces que pueden afectar a personas con epilepsia'\n");
         printf("Presione 4 si el estado nuevo de la atraccion no tiene ninguna restriccion 'Ninguna'\n");
-        scanf("%d", &opcionNuevaRestriccion);
+        opcionNuevaRestriccion = leerEntero("Seleccione una opcion: ");
         limpiarBuffer();
 
         switch (opcionNuevaRestriccion) {
@@ -1551,7 +1580,7 @@ void menuModificarAtraccion(struct NodoAtracciones **raiz)
         printf("Presione 2 para establecer el nuevo estado de la atraccion como 'En mantenimiento'\n");
         printf("Presione 3 para establecer el nuevo estado de la atraccion como 'Fuera de servicio'\n");
         printf("Presione 4 si el nuevo estado de la atraccion es 'Cerrada por horario'\n");
-        scanf("%d", &opcionNuevoEstado);
+        opcionNuevoEstado = leerEntero("Seleccione una opcion: ");
         limpiarBuffer();
 
         switch (opcionNuevoEstado) {
@@ -1573,17 +1602,9 @@ void menuModificarAtraccion(struct NodoAtracciones **raiz)
         }
         } while (opcionNuevoEstado > 4 || opcionNuevoEstado < 1);
 
-
-
         modificarAtraccion(raiz,nombreAtraccion,nuevoNombre,nuevaCapacidad,nuevaDuracion,nuevaAlturaMinima,nuevaEdadMinima,nuevaRestriccion,nuevoEstado);
         }
-
-
     }
-
-
-
-
 }
 
 /*Funciones del menu Visitantes*/
@@ -1591,12 +1612,11 @@ void menuModificarAtraccion(struct NodoAtracciones **raiz)
 void menuInsertarVisitante(struct NodoVisitantes *headVisitantes) {
     struct Entrada entrada;
     struct Horario horario;
-    struct Visitante *nuevoVisitante;
+    struct Visitante *nuevoVisitante = NULL;
     struct NodoVisitantes *ultimo=headVisitantes;
     int nuevoId=1;
-    char codigo[30];
+    char codigo[30], *entradaTextoVisitante = NULL, *nombre = NULL;
 
-    char *nombre;
     int edad, seleccionEntrada,seleccionEstado;
     float altura;
 
@@ -1612,7 +1632,7 @@ void menuInsertarVisitante(struct NodoVisitantes *headVisitantes) {
 
     if(ultimo!=headVisitantes && ultimo->datos!=NULL)
     {
-        nuevoId=atoi(ultimo->datos->entrada.codigo)+1;
+        nuevoId = (int)strtol(ultimo->datos->entrada.codigo, NULL, 10) + 1;
     }
 
     sprintf(codigo,"%d",nuevoId);
@@ -1620,15 +1640,16 @@ void menuInsertarVisitante(struct NodoVisitantes *headVisitantes) {
     entrada.codigo=copiarCadena(codigo);
 
     printf("\nEl codigo asignado automaticamente es: %s\n",entrada.codigo);
-
+    entrada.tipo = NULL;
+    entrada.estado = NULL;
+    entrada.valor = 0;
 
     printf("\nIngrese el tipo de entrada: \n\n");
     printf("Seleccione 1 para establecer la entrada como 'Entrada General'\n");
     printf("Seleccione 2 para establecer la entrada como 'Pase Infantil\n");
     printf("Seleccione 3 para establecer la entrada como 'Pase Familiar\n");
     printf("Seleccione 4 para establecer la entrada como 'Pase Rapido\n");
-    printf("Opcion :\n");
-    scanf("%d",&seleccionEntrada);
+    seleccionEntrada = leerEntero("Seleccione una opcion");
     limpiarBuffer();
     switch (seleccionEntrada) {
         case 1:
@@ -1663,7 +1684,7 @@ void menuInsertarVisitante(struct NodoVisitantes *headVisitantes) {
         printf("Presione 2 para establecer el estado de la entrada como 'Utilizada'\n");
         printf("Presione 3 para establecer el estado de la entrada como 'Anulada'\n");
         printf("Presione 4 para establecer el estado de la entrada como 'Vencida'\n");
-        scanf("%d", &seleccionEstado);
+        seleccionEstado = leerEntero("Seleccione una opcion: ");
         limpiarBuffer();
 
         switch (seleccionEstado) {
@@ -1698,8 +1719,7 @@ void menuInsertarVisitante(struct NodoVisitantes *headVisitantes) {
     printf("Ingrese nombre del visitante: ");
     nombre = pedirCadena();
 
-    printf("Ingrese la edad: ");
-    scanf("%d", &edad);
+    edad = leerEntero("Ingrese la edad: ");
     if(edad<0)
     {
         printf("\nError! -> la edad ingresada no es valida!\n");
@@ -1707,7 +1727,9 @@ void menuInsertarVisitante(struct NodoVisitantes *headVisitantes) {
     }
 
     printf("Ingrese la altura (en metros, ej. 1.75): ");
-    scanf("%f", &altura);
+    entradaTextoVisitante = pedirCadena();
+    altura = strtof(entradaTextoVisitante, NULL);
+    free(entradaTextoVisitante);
     if(altura<0)
     {
         printf("\nError! -> la altura ingresada no es valida!\n");
@@ -1715,15 +1737,13 @@ void menuInsertarVisitante(struct NodoVisitantes *headVisitantes) {
     }
 
     printf("\n--- Horario de Visita ---\n");
-    printf("Ingrese la hora de inicio (En formato 24hrs): ");
-    scanf("%d", &horario.horaInicio);
+    horario.horaInicio = leerEntero("Ingrese la hora de inicio (En formato 24hrs): ");
     if(horario.horaInicio<0 || horario.horaInicio>23)
     {
         printf("\nError! -> la hora ingresada no es valida\n");
         return;
     }
-    printf("Ingrese el minuto de inicio: ");
-    scanf("%d",&horario.minutosInicio);
+    horario.minutosInicio = leerEntero("Ingrese el minuto de inicio: ");
     if(horario.minutosInicio<0 || horario.minutosInicio>59)
     {
         printf("\nError! -> el minuto ingresado no es valido\n");
@@ -1749,7 +1769,7 @@ void menuInsertarVisitante(struct NodoVisitantes *headVisitantes) {
 }
 
 void menuEliminarVisitante(struct NodoVisitantes **headVisitantes) {
-    char *codigoBuscado;
+    char *codigoBuscado = NULL;
     struct Visitante *visitanteEncontrado = NULL;
 
     struct NodoVisitantes *rec = (*headVisitantes)->siguiente;
@@ -1807,7 +1827,7 @@ void menuContarVisitantesAdentro(struct NodoVisitantes *headVisitantes) {
 }
 
 void menuQuitarVisitante(struct NodoVisitantes **headVisitantes) {
-    char *codigoBuscado;
+    char *codigoBuscado = NULL;
     struct Visitante *visitanteEncontrado = NULL;
     struct Visitante *visitanteQuitado=NULL;
 
@@ -1859,7 +1879,7 @@ void menuListarVisitantes(struct NodoVisitantes *headVisitantes) {
 }
 
 void menuRegistrarSalidaVisitante(struct NodoVisitantes *headVisitantes) {
-    char *codigoEntrada;
+    char *codigoEntrada = NULL;
     int horaFin, minutosFin;
     struct Visitante *visitanteEncontrado = NULL;
 
@@ -1885,10 +1905,8 @@ void menuRegistrarSalidaVisitante(struct NodoVisitantes *headVisitantes) {
         rec = rec->siguiente;
     }
     if (visitanteEncontrado != NULL) {
-        printf("Ingrese SOLO la hora de salida: \n");
-        scanf("%d", &horaFin);
-        printf("Ingrese SOLO los minutos de salida: \n");
-        scanf("%d", &minutosFin);
+        horaFin = leerEntero("Ingrese SOLO la hora de salida: \n");
+        minutosFin = leerEntero("Ingrese SOLO los minutos de salida: \n");
         marcarSalidaVisitante (headVisitantes, codigoEntrada, horaFin, minutosFin);
         printf("La salida ha sido marcada correctamente.\n");
         limpiarBuffer();
@@ -1917,8 +1935,8 @@ void menuRecaudacionDiaria(struct NodoVisitantes *headVisitantes) {
 }
 
 void menuBuscarVisitante(struct NodoVisitantes *headVisitantes) {
-    char *codigoBuscado;
-    struct Visitante *visitanteEncontrado;
+    char *codigoBuscado = NULL;
+    struct Visitante *visitanteEncontrado = NULL;
 
     printf("\n========================================\n");
     printf("            BUSCAR VISITANTE            \n");
@@ -1964,12 +1982,9 @@ void menuBuscarVisitante(struct NodoVisitantes *headVisitantes) {
 }
 
 void menuModificarVisitante(struct NodoVisitantes *headVisitantes) {
-    char *codigoBuscado;
-    char *nuevoNombre;
+    char *codigoBuscado = NULL, *entradaTextoModificarVisitante = NULL, *nuevoNombre = NULL, *nuevoTipoEntrada = NULL, *nuevoEstado = NULL;
     int nuevaEdad;
     float nuevaAltura;
-    char *nuevoTipoEntrada;
-    char *nuevoEstado;
     int resultado;
 
     printf("\n========================================\n");
@@ -1995,13 +2010,13 @@ void menuModificarVisitante(struct NodoVisitantes *headVisitantes) {
     printf("Ingrese el nuevo nombre: \n");
     nuevoNombre = pedirCadena();
 
-    printf("Ingrese la nueva edad: \n");
-    scanf("%d", &nuevaEdad);
+    nuevaEdad = leerEntero("Ingrese la nueva edad: \n");
     limpiarBuffer();
 
     printf("Ingrese la nueva altura (en formato decimal, ej. 1.75): \n");
-    scanf("%f", &nuevaAltura);
-    limpiarBuffer();
+    entradaTextoModificarVisitante = pedirCadena();
+    nuevaAltura = strtof(entradaTextoModificarVisitante, NULL);
+    free(entradaTextoModificarVisitante);
 
     printf("Ingrese el nuevo tipo de entrada (ej. General, VIP, FastPass): \n");
     nuevoTipoEntrada = pedirCadena();
@@ -2110,8 +2125,40 @@ void menuVisitantes(struct NodoVisitantes **headVisitantes) {
 
 /*Funciones del menu zona tematica*/
 
+void liberarArbolAtracciones(struct NodoAtracciones *raiz) {
+    if (raiz == NULL) return;
+
+    /* Primero se libera a los sub arboles izq y der */
+    liberarArbolAtracciones(raiz->izquierdo);
+    liberarArbolAtracciones(raiz->derecho);
+
+    /* Si la atracción tiene memoria dinámica dentro, se libera aquí */
+    if (raiz->datos != NULL) {
+        if (raiz->datos->headFila != NULL) {
+            free(raiz->datos->headFila);
+        }
+        free(raiz->datos);
+    }
+    free(raiz);
+}
+
+void liberarZonaTematicaCompleta(struct ZonaTematica *zona) {
+    if (zona == NULL) return;
+
+    /* 1. Liberamos las cadenas dinámicas */
+    if (zona->nombre != NULL) free(zona->nombre);
+    if (zona->codigo != NULL) free(zona->codigo);
+    if (zona->tematica != NULL) free(zona->tematica);
+
+    /* 2. Liberamos su árbol de atracciones */
+    liberarArbolAtracciones(zona->raizAtracciones);
+
+    /* 3. Liberamos la estructura en sí */
+    free(zona);
+}
+
 void menuAgregarZonaTematica(struct NodoZonaTematica **headZonaTematica) {
-    char *nombre, *codigo, *tematica;
+    char *nombre = NULL, *codigo = NULL, *tematica = NULL;
     int capacidad;
     struct Horario horarioZona;
 
@@ -2130,8 +2177,7 @@ void menuAgregarZonaTematica(struct NodoZonaTematica **headZonaTematica) {
     tematica = pedirCadena();
 
     /*Pedir datos numéricos */
-    printf("Ingrese la capacidad aproximada de personas: \n");
-    scanf("%d", &capacidad);
+    capacidad = leerEntero("Ingrese la capacidad aproximada de personas: \n");
     if(capacidad<=0)
     {
         printf("Error! -> la capacidad ingresada no es valida\n");
@@ -2142,32 +2188,28 @@ void menuAgregarZonaTematica(struct NodoZonaTematica **headZonaTematica) {
     /*Pedir horarios */
     printf("\n--- Horario de la Zona ---\n");
 
-    printf("Ingrese la hora de apertura (En formato 24hrs): \n");
-    scanf("%d", &horarioZona.horaInicio);
+    horarioZona.horaInicio = leerEntero("Ingrese la hora de apertura (En formato 24hrs): \n");
     if(horarioZona.horaInicio<0 || horarioZona.horaInicio>23)
     {
         printf("Error! -> la hora de inicio ingresada no es valida");
         return;
     }
 
-    printf("Ingrese los minutos de apertura: \n");
-    scanf("%d", &horarioZona.minutosInicio);
+    horarioZona.minutosInicio = leerEntero("Ingrese los minutos de apertura: \n");
     if(horarioZona.minutosInicio<0 || horarioZona.minutosInicio>59)
     {
         printf("Error! -> el minuto de inicio ingresado no es valido");
         return;
     }
 
-    printf("Ingrese la hora de cierre (En formato 24hrs): \n");
-    scanf("%d", &horarioZona.horaFin);
+    horarioZona.horaFin = leerEntero("Ingrese la hora de cierre (En formato 24hrs): \n");
     if(horarioZona.horaFin<0 || horarioZona.horaFin>23)
     {
         printf("Error! -> la hora de fin ingresada no es valida");
         return;
     }
 
-    printf("Ingrese los minutos de cierre: \n");
-    scanf("%d", &horarioZona.minutosFin);
+    horarioZona.minutosFin = leerEntero("Ingrese los minutos de cierre: \n");
     if(horarioZona.minutosFin<0 || horarioZona.minutosFin>59)
     {
         printf("Error! -> el minuto de fin ingresado no es valido");
@@ -2182,8 +2224,8 @@ void menuAgregarZonaTematica(struct NodoZonaTematica **headZonaTematica) {
 }
 
 void menuBuscarZona(struct NodoZonaTematica *headZona) {
-    char *nombre;
-    struct ZonaTematica *zonaBuscada;
+    char *nombre = NULL;
+    struct ZonaTematica *zonaBuscada = NULL;
 
     printf("\n========================================\n");
     printf("              BUSCAR ZONA               \n");
@@ -2218,8 +2260,8 @@ void menuBuscarZona(struct NodoZonaTematica *headZona) {
     }
 }
 void menuQuitarZona(struct NodoZonaTematica **headZona) {
-    char *nombre;
-    struct ZonaTematica *zonaQuitada;
+    char *nombre = NULL;
+    struct ZonaTematica *zonaQuitada = NULL;
 
     printf("\n========================================\n");
     printf("              QUITAR ZONA               \n");
@@ -2238,9 +2280,11 @@ void menuQuitarZona(struct NodoZonaTematica **headZona) {
     printf("\n----------------------------------------\n");
     if (zonaQuitada != NULL) {
         printf("La zona '%s' fue removida exitosamente del parque.\n", zonaQuitada->nombre);
+        liberarZonaTematicaCompleta(zonaQuitada);
     } else {
         printf("Error: No se pudo quitar. La zona '%s' no existe.\n", nombre);
     }
+    free(nombre);
 }
 
 void menuListarZonasAltaCapacidad(struct NodoZonaTematica *headZona) {
@@ -2255,8 +2299,7 @@ void menuListarZonasAltaCapacidad(struct NodoZonaTematica *headZona) {
         return;
     }
 
-    printf("Ingrese el limite de capacidad minima deseada a buscar: \n");
-    scanf("%d", &limite);
+    limite = leerEntero("Ingrese el limite de capacidad minima deseada a buscar: \n");
     limpiarBuffer();
 
     printf("\n--- Resultados ---\n");
@@ -2280,8 +2323,8 @@ void menuContarZonasTematicas(struct NodoZonaTematica *headZona) {
 }
 
 void menuVerificarCapacidadZona(struct NodoZonaTematica *headZona) {
-    char *nombre;
-    struct ZonaTematica *zonaBuscada;
+    char *nombre = NULL;
+    struct ZonaTematica *zonaBuscada = NULL;
 
     printf("\n========================================\n");
     printf("    CONSULTAR DISPONIBILIDAD DE ZONA    \n");
@@ -2314,10 +2357,10 @@ void menuVerificarCapacidadZona(struct NodoZonaTematica *headZona) {
 }
 
 void menuFormarEnFilaAtraccionZona(struct NodoZonaTematica *headZona, struct NodoVisitantes *headVisitantes) {
-    char *codigoVisitante, *nombreZona, *nombreAtraccion;
-    struct Visitante *visitanteEncontrado;
-    struct ZonaTematica *zonaBuscada;
-    struct NodoAtracciones *atraccionBuscada;
+    char *codigoVisitante = NULL, *nombreZona = NULL, *nombreAtraccion = NULL;
+    struct Visitante *visitanteEncontrado = NULL;
+    struct ZonaTematica *zonaBuscada = NULL;
+    struct NodoAtracciones *atraccionBuscada = NULL;
 
     printf("\n========================================\n");
     printf("     FORMAR VISITANTE EN ATRACCION      \n");
@@ -2416,8 +2459,8 @@ void menuZonasTematicas(struct NodoZonaTematica **headZona)
 /* ==========================================*/
 void menuAtracciones(struct NodoZonaTematica **headZona) {
 
-    struct ZonaTematica *Buscar;
-    char *ZonaObjetivo;
+    struct ZonaTematica *Buscar = NULL;
+    char *ZonaObjetivo = NULL;
     char opcion;
 
     printf("Primero indique el nombre de la zona tematica que desea operar: \n");
@@ -2491,17 +2534,15 @@ void menuAtracciones(struct NodoZonaTematica **headZona) {
 /* ==========================================*/
 void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) {
     char opcion,subOpcion;
-    char *nombreAtraccion,*nombreZona;
-    struct ZonaTematica *Buscada;
-    char *codigoVisitante;
-
+    char *nombreAtraccion = NULL,*nombreZona = NULL, *codigoVisitante = NULL;
+    struct ZonaTematica *Buscada = NULL;
     struct NodoAtracciones *AtraccionActual=NULL;
 
-    struct Visitante *Encontrado;
-    struct Visitante **Evacuado;
+    struct Visitante *Encontrado = NULL;
+    struct Visitante **Evacuado = NULL;
 
-    struct NodoVisitantes *rec;
-    struct Visitante *VisitanteLista;
+    struct NodoVisitantes *rec = NULL;
+    struct Visitante *VisitanteLista = NULL;
 
 
     int tiempo,cantidad,cantidadEnFila,i;
@@ -2735,9 +2776,9 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
 }
 
 void menuZonaMasPopular(struct NodoZonaTematica *headZona) {
-    struct NodoZonaTematica *actual;
+    struct NodoZonaTematica *actual = NULL;
     struct ZonaTematica *zonaTop = NULL;
-    int maxUsos = -1;
+    int maxUsos = -1, usosActual = 0;
 
     printf("\n========================================\n");
     printf("       ZONA CON MAYOR TENDENCIA         \n");
@@ -2750,7 +2791,7 @@ void menuZonaMasPopular(struct NodoZonaTematica *headZona) {
 
     actual = headZona;
     do {
-        int usosActual = sumarUsosAtracciones(actual->datos->raizAtracciones);
+        usosActual = sumarUsosAtracciones(actual->datos->raizAtracciones);
 
         if (usosActual > maxUsos) {
             maxUsos = usosActual;
@@ -2812,7 +2853,7 @@ void menuCierre(struct NodoVisitantes *headVisitantes, struct NodoZonaTematica *
 int main(void) {
 
     /* 1. Inicialización de las estructuras principales */
-    struct Parque *IBCLandia;
+    struct Parque *IBCLandia = NULL;
     char opcion;
 
     IBCLandia = (struct Parque *)malloc(sizeof(struct Parque));
