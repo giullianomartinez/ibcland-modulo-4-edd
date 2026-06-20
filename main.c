@@ -1327,7 +1327,7 @@ void menuAgregarAtraccion(struct NodoAtracciones **raiz)
 
         printf("Ingrese la altura minima para la atracción (en metros con decimal): ");
         entradaTexto = pedirCadena();
-        alturaMinima = strtof(entradaTexto, NULL);
+        alturaMinima = (float)strtod(entradaTexto, NULL);
         free(entradaTexto);
         if(alturaMinima<=0)
         {
@@ -1528,7 +1528,7 @@ void menuModificarAtraccion(struct NodoAtracciones **raiz)
 
             printf("\nIngrese la nueva altura minima de la atraccion : \n");
             entradaTextoFloat = pedirCadena();
-            nuevaAlturaMinima = strtof(entradaTextoFloat, NULL);
+            nuevaAlturaMinima = (float)strtod(entradaTextoFloat, NULL);
             free(entradaTextoFloat);
             if(nuevaAlturaMinima<=0)
             {
@@ -1728,7 +1728,7 @@ void menuInsertarVisitante(struct NodoVisitantes *headVisitantes) {
 
     printf("Ingrese la altura (en metros, ej. 1.75): ");
     entradaTextoVisitante = pedirCadena();
-    altura = strtof(entradaTextoVisitante, NULL);
+    altura = (float)strtod(entradaTextoVisitante, NULL);
     free(entradaTextoVisitante);
     if(altura<0)
     {
@@ -2015,7 +2015,7 @@ void menuModificarVisitante(struct NodoVisitantes *headVisitantes) {
 
     printf("Ingrese la nueva altura (en formato decimal, ej. 1.75): \n");
     entradaTextoModificarVisitante = pedirCadena();
-    nuevaAltura = strtof(entradaTextoModificarVisitante, NULL);
+    nuevaAltura = (float)strtod(entradaTextoModificarVisitante, NULL);
     free(entradaTextoModificarVisitante);
 
     printf("Ingrese el nuevo tipo de entrada (ej. General, VIP, FastPass): \n");
