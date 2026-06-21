@@ -126,6 +126,12 @@ int leerEntero(char *mensaje){
             printf("Entrada invalida. Debe ingresar un numero entero.\n");
         }else{
             esValido = 1;
+            if (entrada[0] == '-' && entrada[1] != '\0'){
+                i = 1;
+            }else{
+                i = 0;
+            }
+
             while(entrada[i] != '\0' && esValido == 1){
                 if (entrada[i] < '0' || entrada[i] > '9'){
                     printf("\nEntrada invalida. Debe ingresar solo numeros.\n\n");
@@ -1750,6 +1756,9 @@ void menuInsertarVisitante(struct NodoVisitantes *headVisitantes) {
     if (compararCadenasIgnorandoMayusculas(entrada.estado, "Activa") != 0) {
         printf("\nError: La entrada no es valida, o ya fue utlizada, esta anulada o vencida.\n");
         printf("Interrumpiendo el registro del visitante...\n");
+        free(entrada.codigo);
+        free(entrada.tipo);
+        free(entrada.estado);
         return;
     }
 
@@ -1968,11 +1977,25 @@ void menuRegistrarSalidaVisitante(struct NodoVisitantes *headVisitantes) {
         rec = rec->siguiente;
     }
     if (visitanteEncontrado != NULL) {
-        horaFin = leerEntero("Ingrese SOLO la hora de salida: \n");
-        minutosFin = leerEntero("Ingrese SOLO los minutos de salida: \n");
+        do{
+            horaFin = leerEntero("Ingrese SOLO la hora de salida: \n");
+            if (horaFin < 0 || horaFin > 23) {
+                printf("Error! -> la hora ingresada no es valida.\n");
+            }
+        }while (horaFin < 0 || horaFin > 23);
+
+        do {
+            minutosFin = leerEntero("Ingrese SOLO los minutos de salida (0-59): \n");
+            if (minutosFin < 0 || minutosFin > 59) {
+                printf("Error! -> el minuto ingresado no es valido.\n");
+            }
+        } while (minutosFin < 0 || minutosFin > 59);
         marcarSalidaVisitante (headVisitantes, codigoEntrada, horaFin, minutosFin);
         printf("La salida ha sido marcada correctamente.\n");
         limpiarBuffer();
+    }else{
+        printf("Error: No se encontro ningun visitante registrado con el codigo '%s'.\n", codigoEntrada);
+        free(codigoEntrada);
     }
 }
 
@@ -2740,7 +2763,7 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
                     {
                         /* 3. Comprobamos si el visitante YA está en la fila */
                         /* Usamos tu funcion de busqueda pasándole el nombre del visitante encontrado */
-                        VisitanteEnFila = buscarVisitanteAtraccion(AtraccionActual, VisitanteLista->nombre);
+                        VisitanteEnFila = buscarVisitanteAtraccion(AtraccionActual, VisitanteLista->entrada.codigo);
 
                         if (VisitanteEnFila != NULL)
                         {
@@ -2807,6 +2830,7 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
                         printf("El visitante con codigo %s no se encuentra en la fila.\n", codigoVisitante);
                     }
                     free(codigoVisitante);
+                    pausarPantalla();
                     break;
 
                 case '5':
@@ -2825,6 +2849,7 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
                         printf("Error: No se encontro a ningun visitante con codigo %s en la fila.\n", codigoVisitante);
                     }
                     free(codigoVisitante);
+                    pausarPantalla();
                     break;
 
                 case '6':
