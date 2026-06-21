@@ -71,6 +71,7 @@ struct Parque {
     struct NodoVisitantes *headVisitantes;
 };
 
+void liberarFilaCompleta(struct NodoFila *headFila);
 
 /* Utilidades */
 char *copiarCadena(char *cadena) {
@@ -190,6 +191,13 @@ void eliminarVisitanteDeLista(struct NodoVisitantes *headVisitantes, struct Visi
             if (rec->siguiente != NULL) {
                 rec->siguiente->anterior = rec->anterior;
             }
+            free(rec->datos->nombre);
+            free(rec->datos->entrada.codigo);
+            free(rec->datos->entrada.tipo);
+            free(rec->datos->entrada.estado);
+
+            free(rec->datos);
+            free(rec);
             return;
         }
         rec = rec->siguiente;
@@ -222,7 +230,7 @@ struct Visitante *quitarVisitanteDeLista(struct NodoVisitantes **headVisitantes,
             if (rec->siguiente != NULL) {
                 rec->siguiente->anterior = rec->anterior;
             }
-
+            free(rec);
             return quitado;
         }
 
@@ -336,6 +344,9 @@ int modificarVisitante(struct NodoVisitantes *headVisitantes, char *codigoBuscad
         return 0;
     }
 
+    free(visitanteEncontrado->nombre);
+    free(visitanteEncontrado->entrada.tipo);
+    free(visitanteEncontrado->entrada.estado);
     visitanteEncontrado->nombre = nuevoNombre;
     visitanteEncontrado->edad = nuevaEdad;
     visitanteEncontrado->altura = nuevaAltura;
@@ -405,9 +416,10 @@ void eliminarVisitanteDeFila(char *codigo, struct NodoFila *HeadFila) {
     while(rec != NULL) {
         if(strcmp(rec->asignacion->entrada.codigo, codigo) == 0) {
             anterior->siguiente = rec->siguiente;
+            free(rec);
             return;
         }
-        anterior = anterior->siguiente;
+        anterior = rec;
         rec = rec->siguiente;
     }
 }
@@ -747,6 +759,7 @@ struct NodoAtracciones *buscarAtraccion(struct NodoAtracciones *arbol, char *nom
 void eliminarAtraccion(struct NodoAtracciones **arbol, char *nombreBuscado) {
 
     struct NodoAtracciones *aux = NULL; /*variable que nos permite almacenar el nodo a eliminar una vez lo encontremos, para luego liberar memoria*/
+    struct Atraccion *datosAEliminar = NULL;
     int comparacion; /*Variable para almacenar resultado de comparación*/
 
     /* Verificamos que el árbol tenga elementos, ya sea al inicio de la ejecución de la función, o tras el recorrido, llegando al último nodo */
@@ -769,7 +782,7 @@ void eliminarAtraccion(struct NodoAtracciones **arbol, char *nombreBuscado) {
     else {
         /* Almacenamos el nodo en el que estamos (que es el que vamos a eliminar) en la variable aux */
         aux = *arbol;
-
+        datosAEliminar = aux->datos;
         /* Verificación: El nodo a eliminar no tiene hijo izquierdo (O es nodo hoja) */
         if (!((*arbol)->izquierdo)) {
             /* Conectamos nuestro nodo padre al hijo derecho */
@@ -786,10 +799,17 @@ void eliminarAtraccion(struct NodoAtracciones **arbol, char *nombreBuscado) {
              * la dirección del nodo congelado */
             reemplazarAtraccion(&(*arbol)->izquierdo, &aux);
         }
-
         /* aux ahora apunta al nodo que queríamos borrar,
          * Liberamos ese bloque de memoria para evitar Memory Leaks. */
         free(aux);
+
+        if (datosAEliminar != NULL) {
+            free(datosAEliminar->nombre);
+            free(datosAEliminar->restriccionSeguridad);
+            free(datosAEliminar->estado);
+            liberarFilaCompleta(datosAEliminar->headFila);
+            free(datosAEliminar);
+        }
     }
 }
 
@@ -856,6 +876,9 @@ void modificarAtraccion(struct NodoAtracciones **raiz, char *nombreViejo, char *
 
     /* Evalúo el caso en que no se quiere cambiar el nombre */
     if (strcmp(nombreViejo, nombreNuevo) == 0) {
+        free(encontrado->datos->restriccionSeguridad);
+        free(encontrado->datos->estado);
+
         encontrado->datos->capacidad = capacidad;
         encontrado->datos->duracion = duracion;
         encontrado->datos-> alturaMinima = alturaMinima;
@@ -885,6 +908,7 @@ void modificarAtraccion(struct NodoAtracciones **raiz, char *nombreViejo, char *
         free(nuevaAtraccion->headFila);
         nuevaAtraccion->headFila = encontrado->datos->headFila;
         nuevaAtraccion->contadorUso = encontrado->datos->contadorUso;
+        encontrado->datos->headFila = NULL;
 
         /* Eliminamos la atracción a modificar e insertamos la modificada */
         eliminarAtraccion(raiz, nombreViejo);
@@ -1082,8 +1106,9 @@ struct ZonaTematica *quitarZona(struct NodoZonaTematica **headZona, char *nombre
                 /* Buscamos mirando un nodo hacia adelante */
                 if (compararCadenasIgnorandoMayusculas(rec->siguiente->datos->nombre, nombre) == 0)
                 {
-                    quitado=rec->siguiente->datos;
-                    rec->siguiente = rec->siguiente->siguiente; /* Lo sacamos y conectamos los de alrededor */
+                    aux = rec->siguiente;
+                    quitado=aux->datos;
+                    rec->siguiente = aux->siguiente; /* Lo sacamos y conectamos los de alrededor */
                     free(aux);
                     return quitado;
                 }
@@ -1862,6 +1887,12 @@ void menuQuitarVisitante(struct NodoVisitantes **headVisitantes) {
             printf("Nombre: %s\n", visitanteQuitado->nombre);
             printf("Edad: %d\n", visitanteQuitado->edad);
             printf("Codigo de Entrada: %s\n", visitanteQuitado->entrada.codigo);
+
+            free(visitanteQuitado->nombre);
+            free(visitanteQuitado->entrada.codigo);
+            free(visitanteQuitado->entrada.tipo);
+            free(visitanteQuitado->entrada.estado);
+            free(visitanteQuitado);
         }
     } else {
         printf("\nError: No se encontro ningun visitante con el codigo '%s'.\n", codigoBuscado);
@@ -2125,6 +2156,19 @@ void menuVisitantes(struct NodoVisitantes **headVisitantes) {
 
 /*Funciones del menu zona tematica*/
 
+void liberarFilaCompleta(struct NodoFila *headFila) {
+    struct NodoFila *rec, *aux;
+    if (headFila == NULL) return;
+
+    rec = headFila->siguiente;
+    while (rec != NULL) {
+        aux = rec;
+        rec = rec->siguiente;
+        free(aux);
+    }
+    free(headFila);
+}
+
 void liberarArbolAtracciones(struct NodoAtracciones *raiz) {
     if (raiz == NULL) return;
 
@@ -2132,11 +2176,8 @@ void liberarArbolAtracciones(struct NodoAtracciones *raiz) {
     liberarArbolAtracciones(raiz->izquierdo);
     liberarArbolAtracciones(raiz->derecho);
 
-    /* Si la atracción tiene memoria dinámica dentro, se libera aquí */
     if (raiz->datos != NULL) {
-        if (raiz->datos->headFila != NULL) {
-            free(raiz->datos->headFila);
-        }
+        liberarFilaCompleta(raiz->datos->headFila);
         free(raiz->datos);
     }
     free(raiz);
