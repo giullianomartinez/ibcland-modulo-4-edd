@@ -77,7 +77,7 @@ void liberarFilaCompleta(struct NodoFila *headFila);
 char *copiarCadena(char *cadena) {
     /* Esta funcion simplemente copia las cadenas */
 
-    char *cadenaCopiada;
+    char *cadenaCopiada = NULL;
     size_t largo; /* Variable para guardar la cantidad char tiene la cadena a copiar, incluido el '\0' */
 
     /* Caso de entregarle un NULL a la función */
@@ -316,7 +316,7 @@ int calcularRecaudacionDiaria(struct NodoVisitantes *headVisitantes) {
 }
 
 struct Visitante *visitanteBuscar(struct NodoVisitantes *headVisitantes, char *codigoBuscado) {
-    struct NodoVisitantes *rec;
+    struct NodoVisitantes *rec = NULL;
     struct Visitante *visitanteBuscado = NULL;
 
     if (headVisitantes == NULL) {
@@ -353,7 +353,7 @@ int modificarVisitante(struct NodoVisitantes *headVisitantes, char *codigoBuscad
     visitanteEncontrado->entrada.tipo = nuevoTipoEntrada;
     visitanteEncontrado->entrada.estado = nuevoEstado;
 
-    /*Retornamos 1 indicando que la modificacion se realizo */
+    /*Retornamos 1 indicando que la modificacion se realizó */
     return 1;
 }
 
@@ -464,8 +464,8 @@ int estimarTiempoEspera(struct NodoFila *HeadFila,int capacidad,int duracion) /*
 
 struct Visitante **vaciarTodaLaFila( struct NodoFila *HeadFila) /*La siguiente funcion vaciara toda la fila, si la funcion esta en mantenimiento y no entra en suspension la fila*/
 {
-    struct Visitante **Personas;
-    struct NodoFila *rec,*aux;
+    struct Visitante **Personas = NULL;
+    struct NodoFila *rec = NULL,*aux = NULL;
     int CantidadPersonas;
     int Contador=0;
 
@@ -886,6 +886,7 @@ void modificarAtraccion(struct NodoAtracciones **raiz, char *nombreViejo, char *
         encontrado->datos->restriccionSeguridad = restriccionSeguridad;
         encontrado->datos->estado = estado;
 
+        free(nombreNuevo);
         printf("La atracción '%s' se modificó exitosamente\n", nombreViejo);
     } else {
         /* Si el nombre cambia necesito retirar la atracción, modificarla y luego volver a insertar
@@ -1447,6 +1448,7 @@ void menuEliminarAtraccion(struct NodoAtracciones **raiz)   /*Funcion para elimi
         eliminarAtraccion(raiz,NombreBuscado);
         printf("\nLa atraccion ha sido eliminada con exito\n");
     }
+    free(NombreBuscado);
 }
 
 void menuVerEstadoFila(struct NodoAtracciones *raiz)
@@ -1467,7 +1469,7 @@ void menuVerEstadoFila(struct NodoAtracciones *raiz)
     {   printf("\n");
         mostrarEstadoFilaAtraccion(Buscada); /*Mostramos los datos de los visitantes*/
     }
-
+    free(Nombre);
 }
 
 void menuAtenderFila(struct NodoAtracciones *raiz)
@@ -1490,6 +1492,7 @@ void menuAtenderFila(struct NodoAtracciones *raiz)
         atenderAtraccion(Buscada); /*Ponemos en funcionamiento la atraccion y subimos el contador de usos*/
         printf("\nLa atraccion ha sido atendida con exito\n");
     }
+    free(Nombre);
 }
 
 void menuMostrarAtraccion(struct NodoAtracciones *raiz)
@@ -1511,6 +1514,7 @@ void menuMostrarAtraccion(struct NodoAtracciones *raiz)
         printf("\n");
         mostrarDatosAtraccion(Buscada); /*Mostramos todos los datos de la atraccion correspondiente*/
     }
+    free(Nombre);
 }
 
 void menuModificarAtraccion(struct NodoAtracciones **raiz)
@@ -1540,6 +1544,8 @@ void menuModificarAtraccion(struct NodoAtracciones **raiz)
             if(nuevaCapacidad<=0)
             {
                 printf("Error! -> la nueva capacidad ingresada no es valida!\n");
+                free(nombreAtraccion);
+                free(nuevoNombre);
                 return;
             }
 
@@ -1548,6 +1554,8 @@ void menuModificarAtraccion(struct NodoAtracciones **raiz)
             if(nuevaDuracion<=0)
             {
                 printf("\nError! -> la nueva duracion ingresada no es valida!\n");
+                free(nombreAtraccion);
+                free(nuevoNombre);
                 return;
             }
 
@@ -1558,6 +1566,8 @@ void menuModificarAtraccion(struct NodoAtracciones **raiz)
             if(nuevaAlturaMinima<=0)
             {
                 printf("Error! -> la nueva altura minima ingresada no es valida!\n");
+                free(nombreAtraccion);
+                free(nuevoNombre);
                 return;
             }
 
@@ -1566,6 +1576,8 @@ void menuModificarAtraccion(struct NodoAtracciones **raiz)
             if(nuevaEdadMinima<=0)
             {
                 printf("\nError! -> la edad minima ingresada no es valida!\n");
+                free(nombreAtraccion);
+                free(nuevoNombre);
                 return;
             }
 
@@ -1628,6 +1640,7 @@ void menuModificarAtraccion(struct NodoAtracciones **raiz)
         } while (opcionNuevoEstado > 4 || opcionNuevoEstado < 1);
 
         modificarAtraccion(raiz,nombreAtraccion,nuevoNombre,nuevaCapacidad,nuevaDuracion,nuevaAlturaMinima,nuevaEdadMinima,nuevaRestriccion,nuevoEstado);
+        free(nombreAtraccion);
         }
     }
 }
@@ -1748,6 +1761,10 @@ void menuInsertarVisitante(struct NodoVisitantes *headVisitantes) {
     if(edad<0)
     {
         printf("\nError! -> la edad ingresada no es valida!\n");
+        free(nombre);
+        free(entrada.codigo);
+        free(entrada.tipo);
+        free(entrada.estado);
         return;
     }
 
@@ -1758,6 +1775,10 @@ void menuInsertarVisitante(struct NodoVisitantes *headVisitantes) {
     if(altura<0)
     {
         printf("\nError! -> la altura ingresada no es valida!\n");
+        free(nombre);
+        free(entrada.codigo);
+        free(entrada.tipo);
+        free(entrada.estado);
         return;
     }
 
@@ -1766,12 +1787,20 @@ void menuInsertarVisitante(struct NodoVisitantes *headVisitantes) {
     if(horario.horaInicio<0 || horario.horaInicio>23)
     {
         printf("\nError! -> la hora ingresada no es valida\n");
+        free(nombre);
+        free(entrada.codigo);
+        free(entrada.tipo);
+        free(entrada.estado);
         return;
     }
     horario.minutosInicio = leerEntero("Ingrese el minuto de inicio: ");
     if(horario.minutosInicio<0 || horario.minutosInicio>59)
     {
         printf("\nError! -> el minuto ingresado no es valido\n");
+        free(nombre);
+        free(entrada.codigo);
+        free(entrada.tipo);
+        free(entrada.estado);
         return;
     }
     limpiarBuffer();
@@ -1897,6 +1926,7 @@ void menuQuitarVisitante(struct NodoVisitantes **headVisitantes) {
     } else {
         printf("\nError: No se encontro ningun visitante con el codigo '%s'.\n", codigoBuscado);
     }
+    free(codigoBuscado);
 }
 
 void menuListarVisitantes(struct NodoVisitantes *headVisitantes) {
@@ -2010,6 +2040,7 @@ void menuBuscarVisitante(struct NodoVisitantes *headVisitantes) {
     } else {
         printf("Error: No se encontro ningun visitante con el codigo '%s'.\n", codigoBuscado);
     }
+    free(codigoBuscado);
 }
 
 void menuModificarVisitante(struct NodoVisitantes *headVisitantes) {
@@ -2032,6 +2063,7 @@ void menuModificarVisitante(struct NodoVisitantes *headVisitantes) {
 
     if (visitanteBuscar(headVisitantes, codigoBuscado) == NULL) {
         printf("\nError: No se encontro ningun visitante con el codigo '%s'.\n", codigoBuscado);
+        free(codigoBuscado);
         return;
     }
 
@@ -2063,6 +2095,7 @@ void menuModificarVisitante(struct NodoVisitantes *headVisitantes) {
     } else {
         printf("Error: No se pudieron actualizar los datos del visitante.\n");
     }
+    free(codigoBuscado);
 }
 
 /* ==========================================*/
@@ -2157,7 +2190,7 @@ void menuVisitantes(struct NodoVisitantes **headVisitantes) {
 /*Funciones del menu zona tematica*/
 
 void liberarFilaCompleta(struct NodoFila *headFila) {
-    struct NodoFila *rec, *aux;
+    struct NodoFila *rec = NULL, *aux = NULL;
     if (headFila == NULL) return;
 
     rec = headFila->siguiente;
@@ -2222,6 +2255,9 @@ void menuAgregarZonaTematica(struct NodoZonaTematica **headZonaTematica) {
     if(capacidad<=0)
     {
         printf("Error! -> la capacidad ingresada no es valida\n");
+        free(nombre);
+        free(codigo);
+        free(tematica);
         return;
     }
     limpiarBuffer();
@@ -2233,6 +2269,9 @@ void menuAgregarZonaTematica(struct NodoZonaTematica **headZonaTematica) {
     if(horarioZona.horaInicio<0 || horarioZona.horaInicio>23)
     {
         printf("Error! -> la hora de inicio ingresada no es valida");
+        free(nombre);
+        free(codigo);
+        free(tematica);
         return;
     }
 
@@ -2240,6 +2279,9 @@ void menuAgregarZonaTematica(struct NodoZonaTematica **headZonaTematica) {
     if(horarioZona.minutosInicio<0 || horarioZona.minutosInicio>59)
     {
         printf("Error! -> el minuto de inicio ingresado no es valido");
+        free(nombre);
+        free(codigo);
+        free(tematica);
         return;
     }
 
@@ -2247,6 +2289,9 @@ void menuAgregarZonaTematica(struct NodoZonaTematica **headZonaTematica) {
     if(horarioZona.horaFin<0 || horarioZona.horaFin>23)
     {
         printf("Error! -> la hora de fin ingresada no es valida");
+        free(nombre);
+        free(codigo);
+        free(tematica);
         return;
     }
 
@@ -2254,6 +2299,9 @@ void menuAgregarZonaTematica(struct NodoZonaTematica **headZonaTematica) {
     if(horarioZona.minutosFin<0 || horarioZona.minutosFin>59)
     {
         printf("Error! -> el minuto de fin ingresado no es valido");
+        free(nombre);
+        free(codigo);
+        free(tematica);
         return;
     }
     limpiarBuffer();
@@ -2262,6 +2310,10 @@ void menuAgregarZonaTematica(struct NodoZonaTematica **headZonaTematica) {
 
     printf("\n----------------------------------------\n");
     printf("La zona '%s' fue agregada exitosamente al parque.\n", nombre);
+
+    free(nombre);
+    free(codigo);
+    free(tematica);
 }
 
 void menuBuscarZona(struct NodoZonaTematica *headZona) {
@@ -2299,6 +2351,7 @@ void menuBuscarZona(struct NodoZonaTematica *headZona) {
     {
         printf("Error: No se encontro ninguna zona con el nombre '%s'.\n", nombre);
     }
+    free(nombre);
 }
 void menuQuitarZona(struct NodoZonaTematica **headZona) {
     char *nombre = NULL;
@@ -2395,6 +2448,7 @@ void menuVerificarCapacidadZona(struct NodoZonaTematica *headZona) {
     } else {
         printf("Error: No se encontro ninguna zona con el nombre '%s'.\n", nombre);
     }
+    free(nombre);
 }
 
 void menuFormarEnFilaAtraccionZona(struct NodoZonaTematica *headZona, struct NodoVisitantes *headVisitantes) {
@@ -2413,6 +2467,7 @@ void menuFormarEnFilaAtraccionZona(struct NodoZonaTematica *headZona, struct Nod
     visitanteEncontrado = visitanteBuscar(headVisitantes, codigoVisitante);
     if (visitanteEncontrado == NULL) {
         printf("Error: No se encontro ningun visitante con el codigo '%s'.\n", codigoVisitante);
+        free(codigoVisitante);
         return;
     }
 
@@ -2422,6 +2477,8 @@ void menuFormarEnFilaAtraccionZona(struct NodoZonaTematica *headZona, struct Nod
     zonaBuscada = buscarZonaTematica(headZona, nombreZona);
     if (zonaBuscada == NULL) {
         printf("Error: La zona '%s' no existe en el parque.\n", nombreZona);
+        free(codigoVisitante);
+        free(nombreZona);
         return;
     }
 
@@ -2431,12 +2488,18 @@ void menuFormarEnFilaAtraccionZona(struct NodoZonaTematica *headZona, struct Nod
     atraccionBuscada = buscarAtraccion(zonaBuscada->raizAtracciones, nombreAtraccion);
     if (atraccionBuscada == NULL) {
         printf("Error: La atraccion '%s' no se encuentra en la zona.\n", nombreAtraccion);
+        free(codigoVisitante);
+        free(nombreZona);
+        free(nombreAtraccion);
         return;
     }
 
     printf("\n----------------------------------------\n");
     printf("El visitante");
     formarEnFilaAtraccionZona(zonaBuscada, atraccionBuscada, visitanteEncontrado);
+    free(codigoVisitante);
+    free(nombreZona);
+    free(nombreAtraccion);
 }
 
 /*==========================================*/
@@ -2568,6 +2631,7 @@ void menuAtracciones(struct NodoZonaTematica **headZona) {
         printf("La zona ingresada no existe en el parque");
         pausarPantalla();
     }
+    free(ZonaObjetivo);
 }
 
 /* ==========================================*/
@@ -2612,6 +2676,8 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
         if(AtraccionActual==NULL)
         {
             printf("La atraccion %s no existe en el parque\n",nombreAtraccion);
+            free(nombreZona);
+            free(nombreAtraccion);
             pausarPantalla();
             return;
         }
@@ -2738,6 +2804,7 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
                     } else {
                         printf("El visitante con codigo %s no se encuentra en la fila.\n", codigoVisitante);
                     }
+                    free(codigoVisitante);
                     break;
 
                 case '5':
@@ -2755,6 +2822,7 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
                         /* 3. Si no se encuentra, avisamos al usuario */
                         printf("Error: No se encontro a ningun visitante con codigo %s en la fila.\n", codigoVisitante);
                     }
+                    free(codigoVisitante);
                     break;
 
                 case '6':
@@ -2807,12 +2875,14 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
                 break;
             }
         } while(opcion != '0');
-
+        free(nombreZona);
+        free(nombreAtraccion);
     }
     else
     {
         printf("Error! -> La zona tematica ingresada no existe!\n");
         pausarPantalla();
+        free(nombreZona);
     }
 }
 
