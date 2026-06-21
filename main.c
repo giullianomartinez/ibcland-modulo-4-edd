@@ -1351,6 +1351,7 @@ void menuAgregarAtraccion(struct NodoAtracciones **raiz)
             return;
         }
 
+        limpiarBuffer();
         printf("Ingrese la altura minima para la atracción (en metros con decimal): ");
         entradaTexto = pedirCadena();
         alturaMinima = (float)strtod(entradaTexto, NULL);
@@ -1559,6 +1560,7 @@ void menuModificarAtraccion(struct NodoAtracciones **raiz)
                 return;
             }
 
+            limpiarBuffer();
             printf("\nIngrese la nueva altura minima de la atraccion : \n");
             entradaTextoFloat = pedirCadena();
             nuevaAlturaMinima = (float)strtod(entradaTextoFloat, NULL);
@@ -1767,7 +1769,7 @@ void menuInsertarVisitante(struct NodoVisitantes *headVisitantes) {
         free(entrada.estado);
         return;
     }
-
+    limpiarBuffer();
     printf("Ingrese la altura (en metros, ej. 1.75): ");
     entradaTextoVisitante = pedirCadena();
     altura = (float)strtod(entradaTextoVisitante, NULL);
