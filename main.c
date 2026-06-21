@@ -92,8 +92,10 @@ char *copiarCadena(char *cadena) {
 }
 
 void limpiarBuffer(void) {
+    int c;
     /* Limpia el buffer al hacer una transición entre las funciones scanf y fgets */
-    while (getchar() != '\n');
+    while ((c = getchar()) != '\n' && c != EOF) {
+    }
 }
 
 char *pedirCadena(void) {
@@ -1336,6 +1338,7 @@ void menuAgregarAtraccion(struct NodoAtracciones **raiz)
         capacidad = leerEntero("Ingrese la capacidad de la atraccion: ");
         if(capacidad<=0)
         {
+            limpiarBuffer();
             printf("Error! -> la capacidad ingresada no es valida!\n");
             free(nombre);
             return;
@@ -1344,6 +1347,7 @@ void menuAgregarAtraccion(struct NodoAtracciones **raiz)
         duracion = leerEntero("Ingrese la duracion de la atraccion (en minutos): ");
         if(duracion<=0)
         {
+            limpiarBuffer();
             printf("Error! -> la duracion ingresada no es valida!\n");
             free(nombre);
             return;
@@ -1352,6 +1356,7 @@ void menuAgregarAtraccion(struct NodoAtracciones **raiz)
         edadMinima = leerEntero("Ingrese la edad minima para la atraccion: ");
         if(edadMinima<=0)
         {
+            limpiarBuffer();
             printf("Error! -> la edad minima ingresada no es valida!\n");
             free(nombre);
             return;
@@ -1369,7 +1374,6 @@ void menuAgregarAtraccion(struct NodoAtracciones **raiz)
             return;
         }
 
-        limpiarBuffer();
         printf("Elija una de las siguientes opciones para establecer las restriccion de seguridad de su atraccion:\n");
 
         do {
@@ -1550,6 +1554,7 @@ void menuModificarAtraccion(struct NodoAtracciones **raiz)
             nuevaCapacidad = leerEntero("\nIngrese la nueva capacidad de la atraccion : \n");
             if(nuevaCapacidad<=0)
             {
+                limpiarBuffer();
                 printf("Error! -> la nueva capacidad ingresada no es valida!\n");
                 free(nombreAtraccion);
                 free(nuevoNombre);
@@ -1560,6 +1565,7 @@ void menuModificarAtraccion(struct NodoAtracciones **raiz)
             nuevaDuracion = leerEntero("\nIngrese la nueva duracion de la atraccion (en minutos):\n");
             if(nuevaDuracion<=0)
             {
+                limpiarBuffer();
                 printf("\nError! -> la nueva duracion ingresada no es valida!\n");
                 free(nombreAtraccion);
                 free(nuevoNombre);
@@ -1583,6 +1589,7 @@ void menuModificarAtraccion(struct NodoAtracciones **raiz)
             nuevaEdadMinima = leerEntero("\nIngrese la nueva edad minima de la atraccion :\n");
             if(nuevaEdadMinima<=0)
             {
+                limpiarBuffer();
                 printf("\nError! -> la edad minima ingresada no es valida!\n");
                 free(nombreAtraccion);
                 free(nuevoNombre);
@@ -1690,38 +1697,40 @@ void menuInsertarVisitante(struct NodoVisitantes *headVisitantes) {
     entrada.estado = NULL;
     entrada.valor = 0;
 
-    printf("\nIngrese el tipo de entrada: \n\n");
-    printf("Seleccione 1 para establecer la entrada como 'Entrada General'\n");
-    printf("Seleccione 2 para establecer la entrada como 'Pase Infantil\n");
-    printf("Seleccione 3 para establecer la entrada como 'Pase Familiar\n");
-    printf("Seleccione 4 para establecer la entrada como 'Pase Rapido\n");
-    seleccionEntrada = leerEntero("Seleccione una opcion");
-    limpiarBuffer();
-    switch (seleccionEntrada) {
-        case 1:
-            entrada.tipo = copiarCadena("Entrada General");
-            entrada.valor= 5000;
-            printf("\nEl valor de la entrada se establece como $5000\n");
-            break;
-        case 2:
-            entrada.tipo = copiarCadena("Pase Infantil");
-            entrada.valor= 3000;
-            printf("\nEl valor de la entrada se establece como $3000\n");
-            break;
-        case 3:
-            entrada.tipo = copiarCadena("Pase Familiar");
-            entrada.valor= 8000;
-            printf("\nEl valor de la entrada se establece como $8000\n");
-            break;
-        case 4:
-            entrada.tipo = copiarCadena("Pase Rapido");
-            entrada.valor= 10000;
-            printf("\nEl valor de la entrada se establece como $10000\n");
-            break;
-        default:
-            printf("\nError! -> la opcion que ingreso no es valida\n");
-            break;
-    }
+    do {
+        printf("\nIngrese el tipo de entrada: \n\n");
+        printf("Seleccione 1 para establecer la entrada como 'Entrada General'\n");
+        printf("Seleccione 2 para establecer la entrada como 'Pase Infantil\n");
+        printf("Seleccione 3 para establecer la entrada como 'Pase Familiar\n");
+        printf("Seleccione 4 para establecer la entrada como 'Pase Rapido\n");
+        seleccionEntrada = leerEntero("Seleccione una opcion");
+        limpiarBuffer();
+        switch (seleccionEntrada) {
+            case 1:
+                entrada.tipo = copiarCadena("Entrada General");
+                entrada.valor= 5000;
+                printf("\nEl valor de la entrada se establece como $5000\n");
+                break;
+            case 2:
+                entrada.tipo = copiarCadena("Pase Infantil");
+                entrada.valor= 3000;
+                printf("\nEl valor de la entrada se establece como $3000\n");
+                break;
+            case 3:
+                entrada.tipo = copiarCadena("Pase Familiar");
+                entrada.valor= 8000;
+                printf("\nEl valor de la entrada se establece como $8000\n");
+                break;
+            case 4:
+                entrada.tipo = copiarCadena("Pase Rapido");
+                entrada.valor= 10000;
+                printf("\nEl valor de la entrada se establece como $10000\n");
+                break;
+            default:
+                printf("\nError! -> la opcion que ingreso no es valida\n");
+                break;
+        }
+    } while (seleccionEntrada > 4 || seleccionEntrada < 1);
 
 
     do {
@@ -1771,6 +1780,7 @@ void menuInsertarVisitante(struct NodoVisitantes *headVisitantes) {
     edad = leerEntero("Ingrese la edad: ");
     if(edad<0)
     {
+        limpiarBuffer();
         printf("\nError! -> la edad ingresada no es valida!\n");
         free(nombre);
         free(entrada.codigo);
@@ -1797,6 +1807,7 @@ void menuInsertarVisitante(struct NodoVisitantes *headVisitantes) {
     horario.horaInicio = leerEntero("Ingrese la hora de inicio (En formato 24hrs): ");
     if(horario.horaInicio<0 || horario.horaInicio>23)
     {
+        limpiarBuffer();
         printf("\nError! -> la hora ingresada no es valida\n");
         free(nombre);
         free(entrada.codigo);
@@ -1807,6 +1818,7 @@ void menuInsertarVisitante(struct NodoVisitantes *headVisitantes) {
     horario.minutosInicio = leerEntero("Ingrese el minuto de inicio: ");
     if(horario.minutosInicio<0 || horario.minutosInicio>59)
     {
+        limpiarBuffer();
         printf("\nError! -> el minuto ingresado no es valido\n");
         free(nombre);
         free(entrada.codigo);
@@ -2127,7 +2139,7 @@ void menuModificarVisitante(struct NodoVisitantes *headVisitantes) {
 /*            MENU VISITANTES                   */
 /* ==========================================*/
 void menuVisitantes(struct NodoVisitantes **headVisitantes) {
-    char opcion;
+    int opcion;
     do {
         printf("\n===================================================\n");
         printf("||------------- MENU VISITANTES -----------------||\n");
@@ -2149,57 +2161,57 @@ void menuVisitantes(struct NodoVisitantes **headVisitantes) {
         printf("Seleccione una opcion: ");
 
 
-        scanf(" %c",&opcion);
+        opcion = leerEntero("");
 
         limpiarBuffer();
 
         switch(opcion) {
-            case '1':
+            case 1:
                 menuInsertarVisitante(*headVisitantes);
                 pausarPantalla();
                 break;
 
-            case '2':
+            case 2:
                 menuEliminarVisitante(headVisitantes);
                 pausarPantalla();
                 break;
 
-            case '3':
+            case 3:
                 menuContarTotalVisitantes(*headVisitantes);
                 pausarPantalla();
                 break;
 
-            case '4':
+            case 4:
                 menuContarVisitantesAdentro(*headVisitantes);
                 pausarPantalla();
                 break;
 
-            case '5':
+            case 5:
                 menuQuitarVisitante(headVisitantes);
                 pausarPantalla();
                 break;
 
-            case '6':
+            case 6:
                 menuListarVisitantes(*headVisitantes);
                 pausarPantalla();
                 break;
 
-            case '7':
+            case 7:
                 menuRegistrarSalidaVisitante(*headVisitantes);
                 pausarPantalla();
                 break;
 
-            case '8':
+            case 8:
                 menuModificarVisitante(*headVisitantes);
                 pausarPantalla();
                 break;
 
-            case '9':
+            case 9:
                 menuBuscarVisitante(*headVisitantes);
                 pausarPantalla();
                 break;
 
-            case '0':
+            case 0:
                 printf("\nVolviendo al menu principal...\n");
                 break;
 
@@ -2208,7 +2220,7 @@ void menuVisitantes(struct NodoVisitantes **headVisitantes) {
                 pausarPantalla();
                 break;
         }
-    } while(opcion != '0');
+    } while(opcion != 0);
 }
 
 
@@ -2279,6 +2291,7 @@ void menuAgregarZonaTematica(struct NodoZonaTematica **headZonaTematica) {
     capacidad = leerEntero("Ingrese la capacidad aproximada de personas: \n");
     if(capacidad<=0)
     {
+        limpiarBuffer();
         printf("Error! -> la capacidad ingresada no es valida\n");
         free(nombre);
         free(codigo);
@@ -2293,6 +2306,7 @@ void menuAgregarZonaTematica(struct NodoZonaTematica **headZonaTematica) {
     horarioZona.horaInicio = leerEntero("Ingrese la hora de apertura (En formato 24hrs): \n");
     if(horarioZona.horaInicio<0 || horarioZona.horaInicio>23)
     {
+        limpiarBuffer();
         printf("Error! -> la hora de inicio ingresada no es valida");
         free(nombre);
         free(codigo);
@@ -2303,6 +2317,7 @@ void menuAgregarZonaTematica(struct NodoZonaTematica **headZonaTematica) {
     horarioZona.minutosInicio = leerEntero("Ingrese los minutos de apertura: \n");
     if(horarioZona.minutosInicio<0 || horarioZona.minutosInicio>59)
     {
+        limpiarBuffer();
         printf("Error! -> el minuto de inicio ingresado no es valido");
         free(nombre);
         free(codigo);
@@ -2313,6 +2328,7 @@ void menuAgregarZonaTematica(struct NodoZonaTematica **headZonaTematica) {
     horarioZona.horaFin = leerEntero("Ingrese la hora de cierre (En formato 24hrs): \n");
     if(horarioZona.horaFin<0 || horarioZona.horaFin>23)
     {
+        limpiarBuffer();
         printf("Error! -> la hora de fin ingresada no es valida");
         free(nombre);
         free(codigo);
@@ -2323,6 +2339,7 @@ void menuAgregarZonaTematica(struct NodoZonaTematica **headZonaTematica) {
     horarioZona.minutosFin = leerEntero("Ingrese los minutos de cierre: \n");
     if(horarioZona.minutosFin<0 || horarioZona.minutosFin>59)
     {
+        limpiarBuffer();
         printf("Error! -> el minuto de fin ingresado no es valido");
         free(nombre);
         free(codigo);
@@ -2532,7 +2549,7 @@ void menuFormarEnFilaAtraccionZona(struct NodoZonaTematica *headZona, struct Nod
 /*==========================================*/
 void menuZonasTematicas(struct NodoZonaTematica **headZona)
 {
-    char opcion;
+    int opcion;
 
     do {
         printf("===================================================\n");
@@ -2549,31 +2566,31 @@ void menuZonasTematicas(struct NodoZonaTematica **headZona)
         printf("||                                               ||\n");
         printf("===================================================\n");
         printf("Seleccione una opcion: ");
-        scanf(" %c", &opcion);
+        opcion = leerEntero("");
         limpiarBuffer();
 
         switch(opcion) {
-            case '1':
+            case 1:
                 menuAgregarZonaTematica(headZona);
                 pausarPantalla();
                 break;
-            case '2':
+            case 2:
                 menuBuscarZona(*headZona); /* Pasa solo el puntero*/
                 pausarPantalla();
                 break;
-            case '3':
+            case 3:
                 menuQuitarZona(headZona); /* Pasa el doble puntero*/
                 pausarPantalla();
                 break;
-            case '4':
+            case 4:
                 menuListarZonasAltaCapacidad(*headZona); /* Pasa solo el puntero*/
                 pausarPantalla();
                 break;
-            case '5':
+            case 5:
                 menuContarZonasTematicas(*headZona); /* Pasa solo el puntero*/
                 pausarPantalla();
                 break;
-            case '0':
+            case 0:
                 printf("\nVolviendo al menu principal...\n");
                 break;
             default:
@@ -2581,7 +2598,7 @@ void menuZonasTematicas(struct NodoZonaTematica **headZona)
                 pausarPantalla();
                 break;
         }
-    }while(opcion != '0');
+    }while(opcion != 0);
 }
 /* ==========================================*/
 /*            MENU ATRACCIONES                 */
@@ -2590,7 +2607,7 @@ void menuAtracciones(struct NodoZonaTematica **headZona) {
 
     struct ZonaTematica *Buscar = NULL;
     char *ZonaObjetivo = NULL;
-    char opcion;
+    int opcion;
 
     printf("Primero indique el nombre de la zona tematica que desea operar: \n");
     ZonaObjetivo=pedirCadena();
@@ -2615,32 +2632,32 @@ void menuAtracciones(struct NodoZonaTematica **headZona) {
             printf("||                                               ||\n");
             printf("===================================================\n");
             printf("Seleccione una opcion: ");
-            scanf(" %c", &opcion);
+            opcion = leerEntero("");
             limpiarBuffer();
 
 
             switch(opcion) {
-                case '1':
+                case 1:
                     menuAgregarAtraccion(&Buscar->raizAtracciones);
                     pausarPantalla();
                     break;
-                case '2':
+                case 2:
                     menuMostrarAtraccion(Buscar->raizAtracciones);
                     pausarPantalla();
                     break;
-                case '3':
+                case 3:
                     menuModificarAtraccion(&Buscar->raizAtracciones);
                     pausarPantalla();
                     break;
-                case '4':
+                case 4:
                     menuEliminarAtraccion(&Buscar->raizAtracciones);
                     pausarPantalla();
                     break;
-                case '5':
+                case 5:
                     listarAtracciones(Buscar->raizAtracciones);
                     pausarPantalla();
                     break;
-                case '0':
+                case 0:
                     break;
                 default:
                     printf("Opcion invalida.\n");
@@ -2649,7 +2666,7 @@ void menuAtracciones(struct NodoZonaTematica **headZona) {
                 }
 
 
-        }while(opcion != '0');
+        }while(opcion != 0);
     }
     else
     {
@@ -2663,7 +2680,7 @@ void menuAtracciones(struct NodoZonaTematica **headZona) {
 /*                  MENU FILAS              */
 /* ==========================================*/
 void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) {
-    char opcion,subOpcion;
+    int opcion,subOpcion;
     char *nombreAtraccion = NULL,*nombreZona = NULL, *codigoVisitante = NULL;
     struct ZonaTematica *Buscada = NULL;
     struct NodoAtracciones *AtraccionActual=NULL;
@@ -2725,12 +2742,12 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
             printf("||                                               ||\n");
             printf("===================================================\n");
             printf("Seleccione una opcion: ");
-            scanf(" %c", &opcion);
+            opcion = leerEntero("");
             limpiarBuffer();
 
             switch(opcion) {
 
-                case '1':
+                case 1:
                 {
                     struct Visitante *VisitanteEnFila = NULL;
 
@@ -2786,20 +2803,21 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
                     break;
                 }
 
-                case '2':
+                case 2:
 
                     printf("[1] Atender atraccion solo una vez\n");
                     printf("[2] Atender atraccion hasta que la fila este vacia\n");
                     printf("Seleccione de que forma se atendera la atraccion :\n");
 
-                    scanf(" %c",&subOpcion);
+                    subOpcion = leerEntero("");
+                    limpiarBuffer();
 
-                    if(subOpcion=='1')
+                    if(subOpcion==1)
                     {
                         atenderAtraccionUnaVez(AtraccionActual);
                         printf("Exito!-> La fila ha sido atendida correctamente\n");
                     }
-                    else if(subOpcion=='2')
+                    else if(subOpcion==2)
                     {
                         atenderAtraccion(AtraccionActual);
                         printf("Exito!-> La fila ha sido atendida correctamente\n");
@@ -2811,12 +2829,12 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
                     pausarPantalla();
                     break;
 
-                case '3':
+                case 3:
                     mostrarEstadoFilaAtraccion(AtraccionActual);
                     pausarPantalla();
                     break;
 
-                case '4':
+                case 4:
                     printf("Ingrese el codigo del visitante a buscar en la fila: ");
                     codigoVisitante = pedirCadena();
 
@@ -2833,7 +2851,7 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
                     pausarPantalla();
                     break;
 
-                case '5':
+                case 5:
                     printf("Ingrese el codigo del visitante que se retira de la fila: \n");
                     codigoVisitante = pedirCadena();
 
@@ -2852,19 +2870,19 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
                     pausarPantalla();
                     break;
 
-                case '6':
+                case 6:
                     tiempo=estimarTiempoAtraccion(AtraccionActual);
                     printf("Tiempo de espera estimado: %d minutos\n", tiempo);
                     pausarPantalla();
                     break;
 
-                case '7':
+                case 7:
                     cantidad=contarPersonasAtraccion(AtraccionActual);
                     printf("\nPersonas en fila: %d\n", cantidad);
                     pausarPantalla();
                     break;
 
-                case '8':
+                case 8:
                     cantidadEnFila=contarPersonasAtraccion(AtraccionActual);
 
                     if(cantidadEnFila>0)
@@ -2895,13 +2913,13 @@ void menuFilas(struct NodoZonaTematica **headZona, struct NodoVisitantes *head) 
                     pausarPantalla();
                     break;
 
-                case '0': break;
+                case 0: break;
 
                 default: printf("Opcion invalida.\n");
                 pausarPantalla();
                 break;
             }
-        } while(opcion != '0');
+        } while(opcion != 0);
         free(nombreZona);
         free(nombreAtraccion);
     }
@@ -2952,7 +2970,7 @@ void menuZonaMasPopular(struct NodoZonaTematica *headZona) {
 }
 
 void menuCierre(struct NodoVisitantes *headVisitantes, struct NodoZonaTematica **headZona) {
-    char opcion;
+    int opcion;
 
     do {
         printf("\n========================================\n");
@@ -2965,19 +2983,19 @@ void menuCierre(struct NodoVisitantes *headVisitantes, struct NodoZonaTematica *
         printf("||                                    ||\n");
         printf("========================================\n");
         printf("Opcion: ");
-        scanf(" %c", &opcion);
+        opcion = leerEntero("");
         limpiarBuffer();
 
         switch (opcion) {
-            case '1':
+            case 1:
                 menuRecaudacionDiaria(headVisitantes);
                 pausarPantalla();
                 break;
-            case '2':
+            case 2:
                 menuZonaMasPopular(*headZona);
                 pausarPantalla();
                 break;
-            case '0':
+            case 0:
                 printf("\nVolviendo al menu principal...\n");
                 break;
             default:
@@ -2985,14 +3003,14 @@ void menuCierre(struct NodoVisitantes *headVisitantes, struct NodoZonaTematica *
                 pausarPantalla();
                 break;
         }
-    } while (opcion != '0');
+    } while (opcion != 0);
 }
 
 int main(void) {
 
     /* 1. Inicialización de las estructuras principales */
     struct Parque *IBCLandia = NULL;
-    char opcion;
+    int opcion;
 
     IBCLandia = (struct Parque *)malloc(sizeof(struct Parque));
     IBCLandia->headZonaTematica=NULL;
@@ -3020,15 +3038,15 @@ int main(void) {
         printf("||                                               ||\n");
         printf("===================================================\n");
         printf("\nSeleccione una opcion: ");
-        scanf(" %c", &opcion);
+        opcion = leerEntero("");
         limpiarBuffer();
 
         switch (opcion) {
-            case '1': menuVisitantes(&(IBCLandia->headVisitantes)); break;
+            case 1: menuVisitantes(&(IBCLandia->headVisitantes)); break;
 
-            case '2': menuZonasTematicas(&(IBCLandia->headZonaTematica)); break;
+            case 2: menuZonasTematicas(&(IBCLandia->headZonaTematica)); break;
 
-            case '3':
+            case 3:
                 if(IBCLandia->headZonaTematica!=NULL)
                 menuAtracciones(&(IBCLandia->headZonaTematica));
                 else
@@ -3037,7 +3055,7 @@ int main(void) {
                     pausarPantalla();
                 }
                 break;
-            case '4':
+            case 4:
                 if(IBCLandia->headZonaTematica!=NULL)
                 {
                     menuFilas(&(IBCLandia->headZonaTematica),IBCLandia->headVisitantes);
@@ -3048,15 +3066,15 @@ int main(void) {
                     pausarPantalla();
                 }
                 break;
-            case '5': menuCierre(IBCLandia->headVisitantes, &IBCLandia->headZonaTematica); break;
-            case '0':
+            case 5: menuCierre(IBCLandia->headVisitantes, &IBCLandia->headZonaTematica); break;
+            case 0:
                 printf("\nSaliendo de IBCLandia. ¡Hasta pronto!\n");
                 break;
             default:
                 printf("\n>> Error: Opcion no valida.\n");
                 break;
         }
-    } while (opcion != '0');
+    } while (opcion != 0);
 
     return 0;
 }
