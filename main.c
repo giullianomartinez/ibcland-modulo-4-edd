@@ -105,10 +105,21 @@ char *pedirCadena(void) {
     /* hacemos un buffer de 99 caracteres, suficientes para cualquier nombre que se ingrese en este programa */
     char buffer[100];
     /* Pedimos la cadena con fgets */
-    fgets(buffer, 100, stdin);
+    if (fgets(buffer, 100, stdin) == NULL) {
+        /* Si fgets falla, retornamos NULL */
+        return copiarCadena("");
+    }
+
     /* Reemplazamos en el buffer el salto de línea por el caracter nulo */
     posicion = strcspn(buffer, "\n");
-    buffer[posicion] = '\0';
+    
+    if (buffer[posicion] == '\n') {
+        buffer[posicion] = '\0';
+    } else {
+        /* Si no encontramos un salto de línea, significa que el usuario ingresó más caracteres de los permitidos por el buffer.
+         * En este caso, limpiamos el buffer para evitar problemas en la siguiente lectura. */
+        limpiarBuffer();
+    }
 
     return copiarCadena(buffer);
 }
@@ -971,29 +982,36 @@ struct Visitante **evacuarFilaAtraccion(struct NodoAtracciones *Atraccion)
     return NULL;
 }
 
-void formarEnFilaAtraccion(struct NodoAtracciones *Atraccion,struct Visitante *Cliente)
+int formarEnFilaAtraccion(struct NodoAtracciones *Atraccion, struct Visitante *Cliente)
 {
-    if(Atraccion!=NULL && Atraccion->datos!=NULL)
+    if (Atraccion == NULL || Atraccion->datos == NULL || Cliente == NULL)
     {
-        if(Cliente->edad<Atraccion->datos->edadMinima)
-        {
-            printf("Error! -> El visitante no cumple con la edad minima para subirse a la atraccion.\n");
-
-        }
-        else
-        {
-            if(Cliente->altura<Atraccion->datos->alturaMinima)
-            {
-                printf("Error! -> El visitante no cumple con la altura minima para subirse a la atraccion.\n");
-
-            }
-            else
-            {
-                agregarVisitanteAFila(Atraccion->datos->headFila,Cliente);
-                printf("El visitante ha sido formado exitosamente en la fila\n");
-            }
-        }
+        return 0;
     }
+
+    if (strcmp(Atraccion->datos->estado, "Operativa") != 0)
+    {
+        printf("Error! -> La atraccion no esta operativa. Estado actual: %s\n",
+               Atraccion->datos->estado);
+        return 0;
+    }
+
+    if (Cliente->edad < Atraccion->datos->edadMinima)
+    {
+        printf("Error! -> El visitante no cumple con la edad minima para subirse a la atraccion.\n");
+        return 0;
+    }
+
+    if (Cliente->altura < Atraccion->datos->alturaMinima)
+    {
+        printf("Error! -> El visitante no cumple con la altura minima para subirse a la atraccion.\n");
+        return 0;
+    }
+
+    agregarVisitanteAFila(Atraccion->datos->headFila, Cliente);
+    printf("El visitante ha sido formado exitosamente en la fila\n");
+
+    return 1;
 }
 
 int contarAtracciones(struct NodoAtracciones *raizArbol) {
